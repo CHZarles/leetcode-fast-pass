@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 18 - Graph 图 2</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a class="active" href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-18-graph-2">Day 18 - Graph 图 2</h1>
+<p>上节课我们总结了图搜索的通用算法模板，通用算法模板将DFS和BFS算法视为同一种算法的不同变种。面试中的图搜索类题目并不难，大部分的图搜索类题目都可以用DFS或者BFS来解决，真正的难度在于从题目描述中将图构建出来。本节课我们来看DFS和BFS在图搜索类题目中的运用。</p>
+<h2 id="1">1.案例: 岛屿的个数</h2>
+<blockquote>
+<p>给一个 01 矩阵，求不同的岛屿的个数。0代表海，1代表岛，如果两个1相邻，那么这两个1属于同一个岛。我们只考虑上下左右为相邻。</p>
+<p>输入:[
+ [1, 1, 0, 0, 0],
+ [1, 1, 0, 0, 0],
+ [0, 0, 1, 1, 0],
+ [0, 0, 0, 0, 1]]
+输出: 3</p>
+</blockquote>
+<h3 id="_1">思路分析</h3>
+<p>题目相对简单，甚至于已经将图给出。本题使用的是二维矩阵表示法，用01矩阵来表示地图。我们需要在这张地图上数出岛屿的个数，一个关键的条件是：相邻的1属于同一个岛屿。因此我们不仅要找到1的格子，还要判断哪些1与它相邻。对于这题来说DFS和BFS都可以解决，这里我们介绍DFS解法，将BFS解法留作习题。</p>
+<p>我们用两层for循环按行列遍历图。当遍历点值为1时，岛屿数量加一，然后从这个位置开始dfs，搜索所有相连的点。我们需要向这个点的上下左右四个方向选择一个未走过的有效点继续走（即对下一个点递归调用dfs），有效点需要坐标合法且值为1。我们将走过的点数值改为0，由此来避免重复访问。当该点所有可走方向均为0点，则回溯上一层，直到遍历所有可以走到的点，退出dfs函数。</p>
+<h3 id="_2">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">numIslands</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">grid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 遍历图</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">grid</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">grid</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 当遍历点值为1时</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">grid</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 岛屿数量加一</span>
+<span class="w">                </span><span class="n">count</span><span class="o">++</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// dfs搜索所有相连的点</span>
+<span class="w">                </span><span class="n">dfs</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">count</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 坐标上的四个方向(0, 1), (0, -1), (1, 0), (-1, 0)</span>
+<span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 判断是否是有效点</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">valid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">))</span><span class="w">   </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 将走过的点数值改为0，避免重复访问</span>
+<span class="w">    </span><span class="n">grid</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 向四个方向递归调用dfs</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="o">++</span><span class="p">)</span>
+<span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx</span><span class="o">[</span><span class="n">k</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy</span><span class="o">[</span><span class="n">k</span><span class="o">]</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">valid</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 有效点需要坐标合法，且值为1</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">grid</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">grid</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">grid</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;1&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_3">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)。我们将遍历图的每一个位置，并且没有重复访问，所以时间复杂度为O(n)。因为我们使用了DFS，最差情况下递归深度为O(n)，所以空间复杂度为O(n)。</p>
+<h2 id="2-boggle">2.案例: Boggle</h2>
+<blockquote>
+<p>Boggle是一种字母游戏：给出一个二维的字母板和一个单词，寻找字母板网格中是否存在这个单词。单词可以由按顺序的相邻单元的字母组成，其中相邻单元指的是水平或者垂直方向相邻。每个单元中的字母最多只能使用一次。</p>
+<p>输入: ["ABCE","SFCS","ADEE"]，"ABCCED"
+输出: true</p>
+</blockquote>
+<h3 id="_4">思路分析</h3>
+<p>本题和上一题有部分相似之处，在搜寻目标单词时从相邻的单元格向外延伸。实际上，大部分题目都有这种相似性，从图的角度来看，相邻的单元格等价于直接连通的两个位置。尤其本题给定的单词是具有顺序的字母串，最简单的是使用DFS深度优先搜索在图上遍历，搜索单词。</p>
+<p><img alt="1.png" src="resources/4AAF225A8EB4D39F5BB4B2C589C2FC63.png"></p>
+<p>遍历board每个点，看它是否和word开头字母相同，如果相同就执行dfs，递归的匹配当前位置与单词的字母。如果能匹配上，从当前点出发上下左右四个方向匹配下个字符的位置；否则退出dfs。</p>
+<p>这类dfs题有两个关键点：</p>
+<ol>
+<li>状态回溯</li>
+<li>避免重复访问</li>
+</ol>
+<p>状态回溯是指在我们退出dfs时，要将程序状态回复成执行dfs之前的状态。</p>
+<p>避免重复访问：上一题中我们通过将0变成1来标记不需要重复访问的位置(这种操作叫做flip)，但这并不是通用解法。一般来说对于二维数组，我们有两种访问标记访问过的位置：</p>
+<ol>
+<li>使用一个同样大小的visited数组（<code>boolean[][] visited</code>），默认每个位置为false，将访问过的位置设置为true</li>
+<li>将2维矩阵映射到1维。假设每行的长度为len，那么可以用(x, y) -&gt; id: x * len + y，将坐标映射成一个数字，存储在HashSet中避免重复访问</li>
+</ol>
+<p>本题我们使用2维visited数组</p>
+<h3 id="_5">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">exist</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">word</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 遍历board每个点</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">board</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">board</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+<span class="w">            </span><span class="c1">// 如果当前字符与word开头字母相同，执行dfs</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">board</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 使用2维visited数组标记访问过的位置</span>
+<span class="w">                </span><span class="kt">boolean</span><span class="o">[][]</span><span class="w"> </span><span class="n">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">boolean</span><span class="o">[</span><span class="n">board</span><span class="p">.</span><span class="na">length</span><span class="o">][</span><span class="n">board</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">length</span><span class="o">]</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// dfs递归的匹配board[i][j]与word第k位的字母</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dfs</span><span class="p">(</span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">word</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">visited</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 坐标上的四个方向(0, 1), (0, -1), (1, 0), (-1, 0)</span>
+<span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">word</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="o">[][]</span><span class="w"> </span><span class="n">visited</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">length</span><span class="p">())</span><span class="w"> </span><span class="c1">// 如果匹配到达单词结尾，说明匹配成功</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">invalid</span><span class="p">(</span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">word</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">visited</span><span class="p">))</span><span class="w">  </span><span class="c1">// 判断是否是有效点</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 将当前位置标记为已经访问过</span>
+<span class="w">    </span><span class="n">visited</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="n">c</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="c1">// 向四个方向递归调用dfs</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dfs</span><span class="p">(</span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx</span><span class="o">[</span><span class="n">c</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy</span><span class="o">[</span><span class="n">c</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">word</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">visited</span><span class="p">))</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 状态回溯，将程序状态回复成没有访问当前位置的状态</span>
+<span class="w">    </span><span class="n">visited</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">invalid</span><span class="p">(</span><span class="kt">char</span><span class="o">[][]</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">word</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="o">[][]</span><span class="w"> </span><span class="n">visited</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 有效点需要坐标合法，没有访问过，且board[i][j]与word第k位的字母相同</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">board</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">board</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">length</span>
+<span class="w">            </span><span class="o">||</span><span class="w"> </span><span class="n">visited</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">board</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_6">分析</h3>
+<p>时间复杂度O(N * 3<sup>L</sup>)，空间复杂度O(N)。L代表单词的长度，N代表矩阵的大小（单元格的数目）。我们可能在任意一个位置开始dfs，平均每次会向3个方向（4个方向中有一个是来的方向，已经访问过；3个是未访问的方向）执行dfs。dfs的最大搜索深度等于单词的长度L。所以时间复杂度为O(N * 3<sup>L</sup>)。</p>
+<h2 id="3-1">3.案例: 单词接龙1</h2>
+<blockquote>
+<p>给出两个单词（start和end）和一个字典，找出从start到end的最短转换序列，输出最短序列的长度。
+变换规则如下：
++ 每次只能改变一个字母
++ 变换过程中的中间单词必须在字典中出现</p>
+<p>输入: start = "hit"，end = "cog"，wordList = ["hot","dot","dog","lot","log"]
+输出: 5 ("hit"-&gt;"hot"-&gt;"dot"-&gt;"dog"-&gt;"cog")</p>
+</blockquote>
+<h3 id="1_1">思路分析1</h3>
+<p>本题的图没有直接给出，需要我们根据给出的变换规则自己建模。我们可以将每个单词视为一个节点，可以互相转换的两个单词之间存在一条边。所以题目可以转换为，寻找从起始点start走到终点end的最短路径（每条边长度相等均为1）。对于每条边等长的图，寻找最短路径的基本方法是使用BFS。</p>
+<ol>
+<li>新建一个队列和一个集合，从起点start开始执行bfs</li>
+<li>每一轮遍历当前队列中所有节点。对每个节点，将该节点能走到的所有节点加入队列</li>
+<li>如果遇到end节点，退出bfs；否则将路径长度+1。直到队列为空。</li>
+</ol>
+<h3 id="1_2">代码实现1</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">ladderLength</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beginWord</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">endWord</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wordList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将list转成set，方便快速查找</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">words</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">wordList</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">words</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">endWord</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 新建一个队列和一个集合</span>
+<span class="w">    </span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 从起点开始执行bfs</span>
+<span class="w">    </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">beginWord</span><span class="p">);</span>
+<span class="w">    </span><span class="n">visited</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">beginWord</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">queue</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="n">step</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 遍历当前队列中所有节点</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">endWord</span><span class="p">))</span><span class="w"> </span><span class="c1">// 如果遇到目标节点，退出bfs</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">step</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// 获得当前节点能走到的所有节点</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expanding</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">());</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">neighbors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">words</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">visited</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// 将未访问的有效节点加入队列</span>
+<span class="w">                    </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">                    </span><span class="n">visited</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">expanding</span><span class="p">(</span><span class="kt">char</span><span class="o">[]</span><span class="w"> </span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 在单词的每一个位置</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 用a-z循环替换该位置的字符</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;a&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;z&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">;</span>
+<span class="w">            </span><span class="n">neighbors</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">word</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">neighbors</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="1_3">分析1</h3>
+<p>时间复杂度O(nm)，空间复杂度O(n)。n为wordList中单词个数，m为单词长度。bfs所有节点最多遍历一次，每次遍历到之后，需要扫遍单词的每个字符。</p>
+<h3 id="2">思路分析2</h3>
+<p>本题的升级版做法是使用双向BFS。思路与解法1一致，但是使用了两个队列，从start和end分别出发。每次从较小的那个队列开始执行BFS。每一轮遍历当前队列中所有节点。对每个节点，将该节点能走到的所有节点加入队列。如果搜索范围与另一侧队列相遇，退出bfs；否则将路径长度+1。直到队列为空。</p>
+<h3 id="2_1">代码实现2</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">ladderLength</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wordList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dict</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">wordList</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">dict</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">end</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 使用两个队列</span>
+<span class="w">    </span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">startQueue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">(),</span><span class="w"> </span><span class="n">endQueue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">startSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">(),</span><span class="w"> </span><span class="n">endSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 分别将start和end添加进对应的队列</span>
+<span class="w">    </span><span class="n">addWord</span><span class="p">(</span><span class="n">startQueue</span><span class="p">,</span><span class="w"> </span><span class="n">startSet</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="p">);</span>
+<span class="w">    </span><span class="n">addWord</span><span class="p">(</span><span class="n">endQueue</span><span class="p">,</span><span class="w"> </span><span class="n">endSet</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">startQueue</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">endQueue</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 从较小的那个队列开始执行BFS</span>
+<span class="w">        </span><span class="kt">boolean</span><span class="w"> </span><span class="n">forwarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startQueue</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">endQueue</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forwarding</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">startQueue</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">endQueue</span><span class="p">;</span>
+<span class="w">        </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forwarding</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">startSet</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">endSet</span><span class="p">,</span><span class="w"> </span><span class="n">backward</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forwarding</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">endSet</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">startSet</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">step</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 遍历当前队列中所有节点</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">            </span><span class="c1">// 获得当前节点能走到的所有节点</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expanding</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">());</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">neighbors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 排除不在字典中的节点</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">dict</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// 如果搜索范围与另一侧队列相遇，退出bfs</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">backward</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">step</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// 将未访问的有效节点加入队列</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">forward</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span>
+<span class="w">                    </span><span class="n">addWord</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="n">forward</span><span class="p">,</span><span class="w"> </span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">addWord</span><span class="p">(</span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">set</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将单词加入队列和集合，防止重复访问</span>
+<span class="w">    </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">word</span><span class="p">);</span>
+<span class="w">    </span><span class="n">set</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">word</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">expanding</span><span class="p">(</span><span class="kt">char</span><span class="o">[]</span><span class="w"> </span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 在单词的每一个位置</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 用a-z循环替换该位置的字符</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;a&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;z&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">;</span>
+<span class="w">            </span><span class="n">neighbors</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">word</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">neighbors</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_7">分析</h3>
+<p>时间复杂度O(nm)，空间复杂度O(n)。n为wordList中单词个数，m为单词长度。双向BFS的理论时空消耗与普通BFS相同，但是在OA上实际执行时，时间缩短10倍左右。</p>
+<h2 id="4-2">4.案例: 单词接龙2</h2>
+<blockquote>
+<p>给出两个单词（start和end）和一个字典，找出从start到end的最短转换序列，输出最短序列。
+变换规则如下：
++ 每次只能改变一个字母
++ 变换过程中的中间单词必须在字典中出现</p>
+<p>输入: start = "hit"，end = "cog"，wordList = ["hot","dot","dog","lot","log"]
+输出: "hit"-&gt;"hot"-&gt;"dot"-&gt;"dog"-&gt;"cog"</p>
+</blockquote>
+<h3 id="_8">思路分析</h3>
+<p>本题是上一题的进阶版，上一题仅仅是要求计算出最短序列的长度，而本题要求返回最短序列本身。</p>
+<p>第一部分解法与上一题类似：使用bfs搜索最短路径，同时将每一步搜索的结果缓存下来，记录该节点到start的最短距离。这样我们就有了一个字典的子集，其中包含了所有可能的变换序列。</p>
+<p>第二部分我们使用dfs，从end出发，在上一步缓存的子集中向start回溯。</p>
+<h3 id="_9">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">findLadders</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beginWord</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">endWord</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wordList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将list转成set，方便快速查找</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dict</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">wordList</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dict</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">beginWord</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">dict</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">endWord</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 建立一个map用于缓存每一步搜索的结果</span>
+<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 从起点开始执行bfs，返回最短路径的长度</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bfs</span><span class="p">(</span><span class="n">beginWord</span><span class="p">,</span><span class="w"> </span><span class="n">endWord</span><span class="p">,</span><span class="w"> </span><span class="n">dict</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 如果distance为0说明不存在最短路径</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">distance</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 用列表记录最短路径</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 从end出发</span>
+<span class="w">    </span><span class="n">path</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">endWord</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// distance代表当前节点到start的距离，从distance - 1开始向start搜索</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">endWord</span><span class="p">,</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span><span class="w"> </span><span class="c1">// 将所有找到的路径翻转成从start到end</span>
+<span class="w">        </span><span class="n">Collections</span><span class="p">.</span><span class="na">reverse</span><span class="p">(</span><span class="n">list</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 与案例3的解法1基本相同</span>
+<span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">bfs</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">beginWord</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">endWord</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dict</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">map</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 新建一个队列和一个集合</span>
+<span class="w">    </span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 从起点开始执行bfs</span>
+<span class="w">    </span><span class="n">queue</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">beginWord</span><span class="p">);</span>
+<span class="w">    </span><span class="n">visited</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">beginWord</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">queue</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="n">distance</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// 遍历当前队列中所有节点</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">            </span><span class="c1">// 记录当前节点到start的最短距离</span>
+<span class="w">            </span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">distance</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">curt</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 如果遇到目标节点，退出bfs</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">endWord</span><span class="p">))</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">distance</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// 寻找该节点能走到的所有节点</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expanding</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">());</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">neighbors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dict</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">visited</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// 将未访问的有效节点加入队列</span>
+<span class="w">                    </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">                    </span><span class="n">visited</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">curt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">distance</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 当distance为0时，说明到达start</span>
+<span class="w">        </span><span class="c1">// 将当前找到的路径存入ans</span>
+<span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">path</span><span class="p">));</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 获取所有距离start为当前distance的节点</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">distance</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 获得当前节点能走到的所有节点</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expanding</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">());</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">neighbors</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 从这些节点中，找到向start距离更近一步的节点</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">set</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">neighbor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 将该节点添加进path</span>
+<span class="w">            </span><span class="n">path</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 递归执行dfs</span>
+<span class="w">            </span><span class="n">dfs</span><span class="p">(</span><span class="n">neighbor</span><span class="p">,</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 回溯状态，移除节点</span>
+<span class="w">            </span><span class="n">path</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 与案例3的expanding函数相同</span>
+<span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">expanding</span><span class="p">(</span><span class="kt">char</span><span class="o">[]</span><span class="w"> </span><span class="n">word</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 在单词的每一个位置</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 用a-z循环替换该位置的字符</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;a&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="sc">&#39;z&#39;</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j</span><span class="p">;</span>
+<span class="w">            </span><span class="n">neighbors</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">word</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">word</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">neighbors</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_10">分析</h3>
+<p>时间复杂度O(nm)，空间复杂度O(n)，与案例3相同。</p>
+<p>BFS和DFS方向其实并不重要，只需要互相相反即可。先使用BFS的预处理出最短路径可能存在的集合，在使用DFS根据distance逐步向start搜索。如果只使用DFS遍历所有的可能会超时。</p>
+<p>更准确地说，第二部分其实是启发式搜索。我们使用了distance和map预估了dfs下一个节点可能存在的位置，这样才降低了dfs搜索的开销。</p>
+<h2 id="_11">总结</h2>
+<p>本章我们研究了面试中常见的图搜索问题。图搜索问题的基础解法基本都是DFS和BFS算法和他们的变种算法。面试者务必要掌握在图上执行DFS和BFS的能力。</p>
+<p><img alt="2.png" src="resources/975DCF8EC93A135092DB9CAEC24D2569.png"></p>
+<h2 id="_12">习题</h2>
+<ol>
+<li>用BFS解决岛屿的个数</li>
+</ol></article></main>
+</div>
+</body>
+</html>

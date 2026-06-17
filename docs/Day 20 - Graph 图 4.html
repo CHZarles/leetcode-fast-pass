@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 20 - Graph 图 4</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a class="active" href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-20-graph-4">Day 20 - Graph 图 4</h1>
+<p>上一章我们学习了图类题中的经典考察模板：拓扑排序。拓扑排序与BFS层级遍历算法非常相似，但是思路并不相同。希望读者能够掌握并区分这两种算法。本章我们来看另一种经典考察模板：并查集</p>
+<h2 id="_1">核心算法——并查集</h2>
+<p>并查集本身是一种树型的数据结构（也叫disjoint-set），专门处理连通性（合并与查询）问题。Union-Find并查描述的是该数据结构的算法操作：</p>
+<ul>
+<li>Find：确定元素属于哪一个子集</li>
+<li>Union：将两个子集合并成一个集合</li>
+</ul>
+<h3 id="_2">并查集森林</h3>
+<p>并查集森林是一种将每一个集合以树表示的数据结构，其中每一个节点保存着到它的父节点的引用。在并查集森林中，每个集合的代表即是集合的根节点。Find根据其父节点的引用向根行进，直到到达树根。Union通过将一棵树的根连接到另一棵树的根，将两棵树合并到一起。</p>
+<h3 id="union">Union</h3>
+<p>Union可以将两个子集合并成一个集合。初始时有4个节点，互不相连。我们先合并1和2，再合并2和3。我们可以发现1和3也被我们间接相连了。</p>
+<p><img alt="1.gif" src="resources/DB92FEC90593C90BC1B391DFA9A7A2DC.gif"></p>
+<p><em>图片由visualgo制作</em></p>
+<h3 id="find">Find</h3>
+<p>Find函数用于确定元素属于哪一个子集。比如我们查询集合3，并查集会返回根节点1，说明集合3属于集合1代表的集合。
+<img alt="2.gif" src="resources/1557C6D30CDE7E515859AB6D5172D7B6.gif"></p>
+<p><em>图片由visualgo制作</em></p>
+<h3 id="issame">IsSame</h3>
+<p>IsSame并不是标准API的一部分，需要自己实现。实现时IsSame函数会调用Find函数，查询两个集合是否属于同一个更大的集合。
+比如我们查询IsSame(2, 3)，并查集会先查询得知集合2属于集合1代表的集合，集合3也属于集合1代表的集合。返回true，说明集合2 &amp; 3属于同一集合。
+<img alt="3.gif" src="resources/862AF87BE42833AA0197676B982162B7.gif"></p>
+<p><em>图片由visualgo制作</em></p>
+<p>如果我们查询IsSame(0, 3)，并查集会先查询得知集合0属于集合0代表的集合，集合3属于集合1代表的集合。返回false，说明集合0 &amp; 3属于不同集合。
+<img alt="4.gif" src="resources/A5CDD3565741F727DFA9861651469B7C.gif"></p>
+<p><em>图片由visualgo制作</em></p>
+<h2 id="_3">核心算法——并查集的最优实现</h2>
+<p>并查集有多种实现方式，我们在这里只介绍并查集的最优实现。这种实现方法能够在不明显增加空间复杂度的情况下，提供最高效的合并、查找功能，并且能适应所有面试题。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">UF</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w">  </span><span class="c1">// 记录当前包含集合的个数</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="c1">// 记录每个集合的大小</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"> </span><span class="c1">// 每一个节点保存着到它的父节点的引用</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">UF</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 初始时，每个节点是只包含它本身的集合</span>
+<span class="w">        </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="c1">// n个节点对应n个集合</span>
+<span class="w">        </span><span class="c1">// 创建与节点个数相同大小的两个数组</span>
+<span class="w">        </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 因为每个初始集合是只包含节点本身</span>
+<span class="w">            </span><span class="n">size</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 集合大小为1</span>
+<span class="w">            </span><span class="n">id</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="c1">// 集合id为节点本身的id</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 根据当前节点父节点的引用向根行进，直到到达树根</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="c1">// 路径压缩，改变每一个节点的引用</span>
+<span class="w">            </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 分别找到a, b的父节点</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// a &amp; b已经属于统一集合</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pa</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pb</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// 将小的集合合并入大的集合</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">id</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pb</span><span class="p">;</span>
+<span class="w">            </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">id</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pa</span><span class="p">;</span>
+<span class="w">            </span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">count</span><span class="o">--</span><span class="p">;</span><span class="w"> </span><span class="c1">// 合并后，集合个数减1</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// 合并成功</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>每次操作的时间复杂度可近似看做O(1)，空间复杂度O(n)。</p>
+<h2 id="1">1.案例: 冗余的连接</h2>
+<blockquote>
+<p>树是一个无环无向联通图。给定一个具有N个节点的树，树上添加了一条额外的边。找到应该被删除的边，将图还原成一棵树。</p>
+<p>输入: [[1,2], [1,3], [2,3]]
+输出: [2,3]</p>
+</blockquote>
+<h3 id="_4">思路分析</h3>
+<p>此题的思路比较简单，是并查集的简单应用。样例输入为[[1,2], [1,3], [2,3]]时，给出的图是个环。我们不断地把边加入并查集中，一旦发现有条边的两个端点已经在同一个集合内，说明这两个点之前已经连接过，因此当前这条边就是多余的边。</p>
+<h3 id="_5">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">findRedundantConnection</span><span class="p">(</span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">edges</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 建立一个大小为N的并查集</span>
+<span class="w">        </span><span class="n">UF</span><span class="w"> </span><span class="n">uf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UF</span><span class="p">(</span><span class="n">edges</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 不断地把边加入并查集</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">e</span><span class="p">:</span><span class="w"> </span><span class="n">edges</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 如果两个端点已经在同一个集合内，这条边就是多余的边</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">uf</span><span class="p">.</span><span class="na">union</span><span class="p">(</span><span class="n">e</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 将并查集作为inner class，放在原有的class内部</span>
+<span class="w">    </span><span class="kd">class</span> <span class="nc">UF</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w">  </span><span class="c1">// 记录当前包含集合的个数</span>
+<span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="c1">// 记录每个集合的大小</span>
+<span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"> </span><span class="c1">// 每一个节点保存着到它的父节点的引用</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="nf">UF</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 初始时，每个节点是只包含它本身的集合</span>
+<span class="w">            </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="c1">// n个节点对应n个集合</span>
+<span class="w">            </span><span class="c1">// 创建与节点个数相同大小的两个数组</span>
+<span class="w">            </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 因为每个初始集合是只包含节点本身</span>
+<span class="w">                </span><span class="n">size</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 集合大小为1</span>
+<span class="w">                </span><span class="n">id</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="c1">// 集合id为节点本身的id</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 根据当前节点父节点的引用向根行进，直到到达树根</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="c1">// 路径压缩，改变每一个节点的引用</span>
+<span class="w">                </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id</span><span class="o">[</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 分别找到a, b的父节点</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">pa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">pb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// a &amp; b已经属于统一集合</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pa</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pb</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// 将小的集合合并入大的集合</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">id</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pb</span><span class="p">;</span>
+<span class="w">                </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">id</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pa</span><span class="p">;</span>
+<span class="w">                </span><span class="n">size</span><span class="o">[</span><span class="n">pa</span><span class="o">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">size</span><span class="o">[</span><span class="n">pb</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">count</span><span class="o">--</span><span class="p">;</span><span class="w"> </span><span class="c1">// 合并后，集合个数减1</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// 合并成功</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_6">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)。在之后的题解中，我们将略过UF并查集的class定义，直接调用。</p>
+<h2 id="2-2">2.案例: 岛屿的个数2</h2>
+<blockquote>
+<p>给定一个n x m的二维矩阵和一个大小为k的二元数组A，初始二维矩阵全0。二元数组A内的k个元素代表k次操作，表示把二维矩阵中下标为(A[0], A[1])的元素由海洋变为岛屿。返回每次变化之后，二维矩阵中岛屿的数量。</p>
+<p>输入: n = 4, m = 5, A = [[1,1],[0,1],[3,3],[3,4]]
+输出: [1,1,2,2]</p>
+</blockquote>
+<h3 id="_7">思路分析</h3>
+<p>因为相邻的岛屿会被看成一个岛屿，所以由海洋变为岛屿可以导致岛屿合并，从而岛屿数量减少。记录岛屿数量变化的过程，我们需要定义一个矩阵记录地图状态, 还需要定义初始含n × m个集合的并查集。不同于上一题，本题是一个二维的空间状态，所以每个节点相邻点有4个方向。我们有两种处理方法：1. 修改并查集的定义，使用二维数组版本的并查集。2. 将二维的位置投影到一维(x, y) -&gt; x * len + y。本题两种方法都可以，方法2代码量较少。</p>
+<h3 id="_8">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">numIslands2</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">positions</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 定义一个二维数组来记录岛屿的变化</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">island</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">m</span><span class="o">][</span><span class="n">n</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 记录总共的水域面积</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 根据格子的数量创建并查集</span>
+<span class="w">    </span><span class="n">UF</span><span class="w"> </span><span class="n">uf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UF</span><span class="p">(</span><span class="n">total</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 四个方向</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">dy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">positions</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 如果当前位置可以从海洋变成岛屿</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">island</span><span class="o">[</span><span class="n">p</span><span class="o">[</span><span class="mi">0</span><span class="o">]][</span><span class="n">p</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 将当前位置标记成岛屿</span>
+<span class="w">            </span><span class="n">island</span><span class="o">[</span><span class="n">p</span><span class="o">[</span><span class="mi">0</span><span class="o">]][</span><span class="n">p</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// 海洋范围减少</span>
+<span class="w">            </span><span class="n">total</span><span class="o">--</span><span class="p">;</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 找到相邻的位置</span>
+<span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dx</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dy</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// 如果该位置有效且已经是岛屿，那么与当前岛屿合并</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">island</span><span class="o">[</span><span class="n">x</span><span class="o">][</span><span class="n">y</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">uf</span><span class="p">.</span><span class="na">union</span><span class="p">(</span><span class="n">p</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">p</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 岛屿的个数等于从所有集合数量中减去海洋的数量</span>
+<span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="na">count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">total</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_9">分析</h3>
+<p>时间复杂度O(k)，空间复杂度O(n * m)</p>
+<h2 id="3">3.案例: 账户合并</h2>
+<blockquote>
+<p>给定一个帐户列表，每个元素是一个字符串列表，其中第一位元素是用户名，其余元素是该用户的电子邮件。我们需要合并这些帐户：如果两个帐户有相同的电子邮件地址，则这两个帐户肯定属于同一个人。合并帐户后，按以下格式返回帐户：每个帐户的第一个元素是名称，其余元素是按字典序排序后的电子邮件。</p>
+<p>输入:
+[
+['Jack', 'jacksmith@mail.com', 'jack00@mail.com'],
+['Jack', 'jacknybravo@mail.com'],
+['Jack', 'jacksmith@mail.com', 'jack_newyork@mail.com'],
+['Mary', 'mary@mail.com']
+]
+输出:
+[
+['Jack', 'jack00@mail.com', 'jack_newyork@mail.com', 'jacksmith@mail.com'],
+['Jack', 'jacknybravo@mail.com'],
+['Mary', 'mary@mail.com']
+]</p>
+</blockquote>
+<h3 id="_10">思路分析</h3>
+<p>本题很明显是连通性问题，但是处理的过程比较复杂。我们将每个账号看做一个单独的节点，然后根据相同的email来连接节点。连接后要将连接在一起的账号放在同一个列表中。</p>
+<ol>
+<li>将每个email对应到一个账户；如果某个email对应多个账户，用union find将多个账号相连</li>
+<li>相连之后，并查集会将email汇聚成几个集合，将每个集合和根节点的账号id对应起来，用一个map储存账号id与其该有的所有emails的映射关系。</li>
+<li>将上一步的列表排序，加上id所对应的人名，加入答案列表</li>
+</ol>
+<h3 id="_11">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">accountsMerge</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">accounts</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建对应所有账号的并查集</span>
+<span class="w">    </span><span class="n">UF</span><span class="w"> </span><span class="n">uf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UF</span><span class="p">(</span><span class="n">accounts</span><span class="p">.</span><span class="na">size</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// 建立一个map，将每个email对应到一个账户</span>
+<span class="w">    </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">email2Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">accounts</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accounts</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 每个email对应到第一次出现时所属的账户</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
+<span class="w">            </span><span class="n">email2Id</span><span class="p">.</span><span class="na">putIfAbsent</span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 如果对应多个账户，将多个账号相连</span>
+<span class="w">            </span><span class="n">uf</span><span class="p">.</span><span class="na">union</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">email2Id</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">email</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 用一个map储存账号与其该有的emails的映射关系。</span>
+<span class="w">    </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">id2Email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">email</span><span class="p">:</span><span class="w"> </span><span class="n">email2Id</span><span class="p">.</span><span class="na">keySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 将每个集合和根节点的账号id对应起来</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uf</span><span class="p">.</span><span class="na">find</span><span class="p">(</span><span class="n">email2Id</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">email</span><span class="p">));</span>
+<span class="w">        </span><span class="n">id2Email</span><span class="p">.</span><span class="na">putIfAbsent</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">());</span>
+<span class="w">        </span><span class="n">id2Email</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">id</span><span class="p">).</span><span class="na">add</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">id2Email</span><span class="p">.</span><span class="na">keySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">account</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">result</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">account</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 得到账号用户名</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accounts</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">id</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="n">account</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 列表排序</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id2Email</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Collections</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 加入答案列表</span>
+<span class="w">        </span><span class="n">account</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_12">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)</p>
+<h2 id="4">4.案例: 计算除法</h2>
+<blockquote>
+<p>给出一组等式equations和他们对应的值values，每组等式由两个数字组成equations[i] = [A<sub>i</sub>, B<sub>i</sub>]，满足A<sub>i</sub> / B<sub>i</sub> = values[i]。给出一组queries，每组query由两个数字组成queries[i] = [C<sub>i</sub>, D<sub>i</sub>]。返回所有queries的值。</p>
+<p>输入:
+equations = [["a","b"],["b","c"]]
+values = [2.0,3.0]
+queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]
+输出: [6.00000,0.50000,-1.00000,1.00000,-1.00000]</p>
+</blockquote>
+<h3 id="_13">思路分析</h3>
+<p>本题的原型是谷歌的一道汇率转换题，题干与本题类似，给出A-&gt;B, B-&gt;C, C-&gt;D... 等汇率转换比率，计算A-&gt;D的汇率。</p>
+<p>这题需要对UnionFind算法做出一点修改。只有两个节点相连通，才能相除。这说明他们属于同一个集合，有一个共同的父节点。所以我们需要额外的map记录当前节点对它所属的父节点的权重。比如X、Y有共同的父节点Z，我们已知 X/Z 的值和 Y/Z 的值，所以 X/Y = (X/Z) / (Y/Z)。</p>
+<h3 id="_14">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">Solution</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 记录每个节点对应的父节点</span>
+<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">father</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 记录每个节点对它所属的父节点的权重</span>
+<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="o">[]</span><span class="w"> </span><span class="nf">calcEquation</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">equations</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">[]</span><span class="w"> </span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">queries</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">equations</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 获取每个等式的两个部分s1 &amp; s2</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">equations</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">equations</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 如果s1 &amp; s2没被访问过，将它们加入并查集</span>
+<span class="w">            </span><span class="n">putIfAbsent</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>
+<span class="w">            </span><span class="n">putIfAbsent</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 找到对应的父节点</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">root1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">root2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 将root1的父节点指向root2</span>
+<span class="w">            </span><span class="n">father</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">root1</span><span class="p">,</span><span class="w"> </span><span class="n">root2</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 更新root1对它所属的父节点的权重</span>
+<span class="w">            </span><span class="n">weight</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">root1</span><span class="p">,</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">values</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s1</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kt">double</span><span class="o">[]</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="o">[</span><span class="n">queries</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">queries</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 获取每个query的两个部分s1 &amp; s2</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queries</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queries</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 如果s1 &amp; s2没在图中出现过，或者不属于同一集合</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">father</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">father</span><span class="p">.</span><span class="na">containsKey</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">find</span><span class="p">(</span><span class="n">s1</span><span class="p">).</span><span class="na">equals</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">s2</span><span class="p">)))</span>
+<span class="w">                </span><span class="n">res</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="c1">// 无效查询，返回-1</span>
+<span class="w">            </span><span class="k">else</span><span class="w">  </span><span class="c1">// 根据他们分别对父节点的权重，计算结果</span>
+<span class="w">                </span><span class="n">res</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">putIfAbsent</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">father</span><span class="p">.</span><span class="na">putIfAbsent</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+<span class="w">        </span><span class="n">weight</span><span class="p">.</span><span class="na">putIfAbsent</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 修改后的find函数</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 如果已经到达父节点，返回本身</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s</span><span class="p">).</span><span class="na">equals</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 更新到父节点的权重</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">father</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">father</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+<span class="w">        </span><span class="n">father</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<span class="w">        </span><span class="n">weight</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">weight</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_15">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)。本题可以使用BFS/DFS求解，感兴趣的读者可以作为习题。</p>
+<h2 id="_16">总结</h2>
+<p>本章我们学习了图类题中的第二类经典考察模板：并查集。并查集经常出现在大厂面试题中，本身难度不高，但是需要读者掌握这种数据结构的写法。大部分题目都只是并查集结构的简单应用。</p>
+<p><img alt="5.png" src="resources/AB1AA1DD8A81137FDBD238AB3E36EC03.png"></p>
+<h2 id="_17">习题</h2>
+<ol>
+<li>使用BFS/DFS求解案例4计算除法</li>
+</ol></article></main>
+</div>
+</body>
+</html>

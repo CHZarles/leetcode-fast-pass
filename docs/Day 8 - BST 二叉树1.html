@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 8 - BST 二叉树1</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a class="active" href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-08-bst-1">Day 08 - BST 二叉树1</h1>
+<p>在前面的章节里，我们学习了链表和数组两种数据结构。他们的共同点是其中保存的元素符合某种顺序：存在第一个和最后一个元素，并且可以通过指针指向前一位或者后一位来遍历整个集合。这一类结构一般称为线性结构。</p>
+<p>从本章开始，我们要开始接触非线性结构，这里我们从二叉树开始。</p>
+<h2 id="_1">基础知识——二叉树</h2>
+<p>树类结构，是链表结构的衍生。二叉树是每个节点存在最多两个分支的树结构。（单链表则是每个节点只存在单一分支next）</p>
+<p><img alt="1.png" src="resources/9093F06AB7C13D1C190651962F3E3B0F.png">
+<em>图片由visualgo制作</em></p>
+<p>最顶端的节点一般称为根节点，最底层的节点（没有左右分支）则称为叶子节点。二叉树的节点有左、右次序之分，通常分支被称作“左子树”或“右子树”。</p>
+<blockquote>
+<p>思考题：双链表算二叉树么？单链表呢？</p>
+</blockquote>
+<h3 id="_2">二叉树节点的表示方法</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TreeNode</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+<span class="w">    </span><span class="n">TreeNode</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="n">right</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">TreeNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="_3">基础知识——深度优先搜索</h2>
+<p>本章我们重点介绍一种遍历树的算法：DFS深度优先搜索。它也是树类问题中最常见的面试考察模板。</p>
+<p>DFS的特点就是深度优先，在树上的每个位置都会优先往深处走（先左后右），直到叶子节点，再逐层返回。</p>
+<p><img alt="9.gif" src="resources/EFDD7F8C136D59677E856A49253F8CCD.gif"></p>
+<p>DFS通常可以使用递归写法：</p>
+<ol>
+<li>给定某个节点（如果当前节点为null，则返回）</li>
+<li>在本节点上进行操作</li>
+<li>递归地访问左子树</li>
+<li>递归地访问右子树</li>
+</ol>
+<p>模板代码：</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">doSomething</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"> </span><span class="c1">// do something 代表在节点上的操作</span>
+<span class="w">  </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">);</span><span class="w"> </span><span class="c1">// 递归地访问左子树</span>
+<span class="w">  </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">);</span><span class="w"> </span><span class="c1">// 递归地访问右子树</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>要注意do something的操作可能发生在递归访问左右子树之前或者之后。根据do something位置的不同，dfs算法可以衍生出前序遍历、中序遍历、后序遍历三种算法。</p>
+<h2 id="1">1.案例: 二叉树的前序遍历</h2>
+<blockquote>
+<p>给出一棵二叉树，返回其节点值的前序遍历。</p>
+<p>输入: <img alt="2.png" src="resources/8F014E1463F248E822F44800E0E992F9.png">
+输出: [1, 2, 3]</p>
+</blockquote>
+<h3 id="_4">思路分析</h3>
+<p>前序遍历的名字暗示了访问顺序，算法会按照中左右的顺序：首先访问根节点（当前节点），然后遍历左子树，最后遍历右子树。</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">doSomething</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"> </span><span class="c1">// 访问根节点</span>
+<span class="w">  </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历左子树</span>
+<span class="w">  </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历右子树</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>在遍历左、右子树时，仍然先访问根节点（当前节点），然后遍历左子树，最后遍历右子树。</p>
+<p><img alt="3.gif" src="resources/087069F3BFEBF0951172A9CC1EA8B795.gif"></p>
+<p><em>图片由algorithm-visualizer制作</em></p>
+<p>整体上看，前序遍历会先沿左分支走到树的底部，访问完左子树，再通过回溯，回到上一层，然后访问右子树。</p>
+<h3 id="_5">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">preorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">list</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">val</span><span class="p">);</span><span class="w"> </span><span class="c1">// 访问当前节点</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历左子树</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历右子树</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>前序遍历有一种等价的写法，使用了stack和循环。在这里作为补充，建议在纸上模拟CPU调用，可以帮助理解。</p>
+<p>首先存入当前节点值，然后先将右子树压入栈中，再将左子树压入栈中。对栈中元素遍历访问。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">preorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">preorder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="n">preorder</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span><span class="w"> </span><span class="c1">// 存入当前节点值</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">stack</span><span class="p">.</span><span class="na">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="na">pop</span><span class="p">();</span>
+<span class="w">        </span><span class="n">preorder</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">val</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">);</span><span class="w"> </span><span class="c1">// 将右子树压入栈中</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">  </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">);</span><span class="w"> </span><span class="c1">// 将左子树压入栈中</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">preorder</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_6">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)</p>
+<h2 id="2">2.案例: 二叉树的中序遍历</h2>
+<blockquote>
+<p>给出一棵二叉树,返回其中序遍历</p>
+<p>输入: <img alt="2.png" src="resources/8F014E1463F248E822F44800E0E992F9.png">
+输出: [1, 3, 2]</p>
+</blockquote>
+<h3 id="_7">思路分析</h3>
+<p>中序遍历会按照左中右的顺序首先遍历左子树，然后访问根节点，最后遍历右子树</p>
+<p><img alt="4.gif" src="resources/C668115E50173383C060CAAE7152D1AD.gif"></p>
+<p><em>图片由algorithm-visualizer制作</em></p>
+<p>整体上看，由于中序遍历符合左中右的顺序，所以相当于沿着树的横向方向，挨个访问节点</p>
+<p><img alt="6.png" src="resources/9A00DA59FC63BD4594A1484960F672F6.png"></p>
+<h3 id="_8">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">inorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">list</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历左子树</span>
+<span class="w">    </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">val</span><span class="p">);</span><span class="w"> </span><span class="c1">// 访问当前节点</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历右子树</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>中序遍历也有一种使用了stack和循环的等价写法。在这里作为补充，建议在纸上模拟CPU调用，可以帮助理解。</p>
+<p>首先访问左子树，将左子树存入栈中。每次检查栈顶元素，如果右子树为空，取出栈顶元素，如果取出的元素为新栈顶元素右子树，一直弹出至当前元素不为栈顶元素右子树(说明右子树根节点已经被访问过)。如果节点右子树不为空，访问右子树，继续循环遍历左子树，存入栈中。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">inorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">stack</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+<span class="w">            </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">left</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="na">pop</span><span class="p">();</span>
+<span class="w">        </span><span class="n">result</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="na">val</span><span class="p">);</span>
+<span class="w">        </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">right</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_9">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)</p>
+<h2 id="3">3.案例: 二叉树的后序遍历</h2>
+<blockquote>
+<p>给出一棵二叉树，返回其节点值的后序遍历。</p>
+<p>输入: <img alt="2.png" src="resources/8F014E1463F248E822F44800E0E992F9.png">
+输出: [3, 2, 1]</p>
+</blockquote>
+<h3 id="_10">思路分析</h3>
+<p>后序遍历会按照左右中的顺序：首先遍历左子树，然后遍历右子树，最后访问根节点。</p>
+<p><img alt="5.gif" src="resources/264C0853356B7244C3AE7DFFD2DC8FAE.gif"></p>
+<p><em>图片由algorithm-visualizer制作</em></p>
+<p>后序遍历在遍历左、右子树时，仍然先遍历左子树，然后遍历右子树，最后遍历根节点。后序遍历同样也有一种使用了stack和循环的等价写法。但是相比于前序和中序遍历，后序遍历的迭代写法难度较大，代码量长，所以从未作为面试考点出现过，只需要掌握递归式写法。</p>
+<h3 id="_11">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">postorderTraversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">list</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="k">return</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">left</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历左子树</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">right</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"> </span><span class="c1">// 访问当前节点</span>
+<span class="w">    </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="na">val</span><span class="p">);</span><span class="w"> </span><span class="c1">// 遍历右子树</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_12">分析</h3>
+<p>时间复杂度O(n)，空间复杂度O(n)</p>
+<h2 id="4">4.案例: 二叉树迭代器</h2>
+<blockquote>
+<p>设计实现一个二叉树的迭代器：
++ 元素按照中序遍历的顺序被访问
++ next()返回树中下一个元素</p>
+</blockquote>
+<h3 id="_13">思路分析</h3>
+<p>这道题其实就是要求改写中序遍历的stack写法。我们在之后会专门有一个章节来介绍Stack，现在我们只需要知道Stack是一种后进先出的数据结构，包含有push（压栈）和pop（弹出）两个主要API。</p>
+<ul>
+<li>构造时首先访问左子树，将左子树存入栈中。</li>
+<li>next函数每次获取栈顶元素。如果节点右子树不为空，访问右子树，继续循环遍历左子树，存入栈中。</li>
+<li>hasNext可以通过检查栈是否为空来获得。</li>
+</ul>
+<p><img alt="8.gif" src="resources/BC0F27A593C6D3710C5821DBAC221069.gif"></p>
+<h3 id="_14">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">BSTIterator</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">BSTIterator</span><span class="p">(</span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">stack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w"> </span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 将左子树存入栈中</span>
+<span class="w">            </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+<span class="w">            </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">left</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">next</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TreeNode</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">stack</span><span class="p">.</span><span class="na">pop</span><span class="p">();</span><span class="w"> </span><span class="c1">// 获取栈顶元素</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">right</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 如果栈顶元素存在右分支</span>
+<span class="w">            </span><span class="n">TreeNode</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">right</span><span class="p">;</span><span class="w"> </span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">root</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 将右分支的左子树存入栈中</span>
+<span class="w">                </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+<span class="w">                </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="na">left</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">val</span><span class="p">;</span><span class="w"> </span><span class="c1">// 返回栈顶元素</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">hasNext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_15">分析</h3>
+<p>本题的本质是改写中序遍历的stack写法，所以平均时间复杂度为O(1)</p>
+<h2 id="_16">总结</h2>
+<p>前序、中序和后序遍历分别对应一种使用了stack和循环的写法。但是从2018年以来，stack写法作为考点出现的频率越来越低。取而代之的，是在2018年出现了以Morris遍历法作为考点。</p>
+<p><img alt="7.png" src="resources/5A2EB9B745017061449249DC9F811E69.png"></p></article></main>
+</div>
+</body>
+</html>

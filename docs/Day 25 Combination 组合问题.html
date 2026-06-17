@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 25 Combination 组合问题</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a class="active" href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-25-combination">Day 25 Combination 组合问题</h1>
+<p>之前我们学的章节都是关注于某种特定的数据结构：链表、树、图、堆等等。本章我们将学习数论一类的算法题。这类算法题的题目描述一般比较抽象，需要我们从题干中分析出我们需要的数据结构与算，然后分析出算法逻辑，并且写代码实现。这类题对面试者的逻辑思维能力要求较高，需要面试人员有扎实的代码基础和一定的数学分析能力。</p>
+<h2 id="_1">核心算法——组合问题</h2>
+<p>组合问题一般表述成从n个元素中取出k个元素，可选的组合数量为C<sub>n</sub><sup>k</sup>。组合问题一般不考虑元素的顺序。在算法题中，组合问题一般会表述成子集问题：给定n个元素，取出包含k个元素的子集。</p>
+<h2 id="1">1.案例: 子集问题</h2>
+<blockquote>
+<p>给定一个组整数，返回其所有的子集。</p>
+<p>输入: [1, 3]
+输出: [], [1], [3], [1,3]</p>
+</blockquote>
+<h3 id="1_1">思路分析1</h3>
+<p>子集问题有多种解法，最通用的解法是回溯法。backtracing回溯法是DFS的变种算法，可以用在所有排列组合类的问题上，是排列组合的通用解法。</p>
+<p><img alt="1.png" src="resources/186D95EDC02FD704D2CE8AE52C676645.png"></p>
+<p>使用backtracing/DFS解题：从空集合开始，将有效的子集加入最终答案。每次遍历所有可能的元素，选择一个加入当前子集。然后递归的调用dfs。</p>
+<h3 id="1_2">代码实现1</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将有效的子集加入最终答案</span>
+<span class="w">    </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">res</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 遍历所有可能的元素</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 将元素加入当前子集的开头</span>
+<span class="w">        </span><span class="n">res</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 递归的调用dfs</span>
+<span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 移除该元素，回溯状态</span>
+<span class="w">        </span><span class="n">res</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="2">思路分析2</h3>
+<p>除了backtracing/DFS法，BFS也可以解决本题。从空集开始，遍历原数组，每次添加一个元素进入已有的集合。</p>
+<p>假设给定的集合为[1, 2, 3]：</p>
+<ol>
+<li>初始空集[]</li>
+<li>复制已有的集合，并添加元素1，得到[[], [1]]</li>
+<li>复制已有的集合，并添加元素2，得到[[], [1], [2], [1, 2]]</li>
+<li>复制已有的集合，并添加元素3，得到[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]</li>
+</ol>
+<p><img alt="2.png" src="resources/FA9B182B4044AADC209ED024C222B3F6.png"></p>
+<h3 id="2_1">代码实现2</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 添加初始空集</span>
+<span class="w">    </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// 遍历原数组，每次添加一个元素进入已有的集合</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 复制已有的集合</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">ans</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+<span class="w">            </span><span class="c1">// 添加元素</span>
+<span class="w">            </span><span class="n">copy</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 将新的集合加入答案</span>
+<span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">copy</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_2">分析</h3>
+<p>时间复杂度O(n * 2<sup>n</sup>)，空间复杂度O(n * 2<sup>n</sup>)。组合问题的规模根据输入大小，成指数增长。</p>
+<h2 id="2-2">2.案例: 子集问题2</h2>
+<blockquote>
+<p>给定一个组可能重复的整数，返回其所有的子集。</p>
+<p>输入: [1, 5, 3, 3]
+输出: [], [1], [5], [3], [1,5], [1,3], [5,3], [1,5,3], [3,3], [1,3,3], [3,3,5], [1,5,3,3]</p>
+</blockquote>
+<h3 id="1_3">思路分析1</h3>
+<p>本题与上一题相似，但是加入了重复元素。作为排列组合的通用解法，回溯法只需要加入一行判断就可以解决这种情况。</p>
+<ol>
+<li>将给出的数组排序</li>
+<li>从空集合开始，将有效的子集加入最终答案。</li>
+<li>每次遍历所有可能的元素，如果当前元素与前一位元素相同，直接跳过当前元素，避免重复子集。选择一个元素加入当前子集。</li>
+<li>递归的调用dfs。</li>
+</ol>
+<p><img alt="3.png" src="resources/0FC4CBED090547A77C16E4E2B6D0C2D4.png"></p>
+<h3 id="1_4">代码实现1</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">subsetsWithDup</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 排序数组</span>
+<span class="w">    </span><span class="n">Arrays</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将有效的子集加入最终答案</span>
+<span class="w">    </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">res</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 遍历所有可能的元素</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 当前元素与前一位元素相同，直接跳过当前元素，避免重复子集</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 将元素加入当前子集的开头</span>
+<span class="w">        </span><span class="n">res</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 递归的调用dfs</span>
+<span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 移除该元素，回溯状态</span>
+<span class="w">        </span><span class="n">res</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="2_2">思路分析2</h3>
+<p>不同于backtracing法，BFS虽然也可以解决本题，但是需要做更多的修改来处理重复。</p>
+<p>将原数组排序。然后从空集开始，遍历原数组。如果是新的元素，添加元素进入已有的集合。如果是重复的元素，添加元素进入上一步新创建的集合。</p>
+<p>假设给定的集合为[1, 5, 3, 3]：</p>
+<ol>
+<li>将原数组排序[1, 3, 3, 5]</li>
+<li>初始空集[]</li>
+<li>复制已有的集合，并添加元素1，得到[[], [1]]</li>
+<li>复制已有的集合，并添加元素3，得到[[], [1], [3], [1, 3]]</li>
+<li>复制已有的集合，并添加元素3到上一步创建的集合，得到[[], [1], [3], [1, 3], [3, 3], [1, 3, 3]]</li>
+<li>复制已有的集合，并添加元素5，得到[[], [1], [3], [1, 3], [3, 3], [1, 3, 3], [5], [1, 5], [3, 5], [1, 3, 5], [3, 3, 5], [1, 3, 3, 5]]</li>
+</ol>
+<p><img alt="4.png" src="resources/B3419CAF9FBB160F758F81D2F376B7E3.png"></p>
+<h3 id="2_3">代码实现2</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">subsetsWithDup</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 排序数组</span>
+<span class="w">    </span><span class="n">Arrays</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 添加初始空集</span>
+<span class="w">    </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">());</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 遍历原数组，每次添加一个元素</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// start指向所有元素的首位</span>
+<span class="w">        </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 当前元素与前一位元素相同</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// start指向上一步创建的集合</span>
+<span class="w">            </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">end</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// end指向所有元素的末位</span>
+<span class="w">        </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="na">size</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">end</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 复制已有的集合</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">ans</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">j</span><span class="p">));</span>
+<span class="w">            </span><span class="c1">// 添加元素</span>
+<span class="w">            </span><span class="n">copy</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// 将新的集合加入答案</span>
+<span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">copy</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_3">分析</h3>
+<p>时间复杂度O(n * 2<sup>n</sup>)，空间复杂度O(n * 2<sup>n</sup>)。组合问题的规模根据输入大小，成指数增长。</p>
+<h2 id="3">3.案例: 电话号码的字母组合</h2>
+<blockquote>
+<p>给一个不包含0和1的数字字符串，按照电话按键每个数字代表一个字母，请返回其所有可能的字母组合。</p>
+<p>输入: 3
+输出: ["d", "e", "f"]</p>
+</blockquote>
+<p>电话按键:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2<br>ABC</th>
+<th style="text-align: center;">3<br>DEF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4<br>GHI</strong></td>
+<td style="text-align: center;"><strong>5<br>JKL</strong></td>
+<td style="text-align: center;"><strong>6<br>MNO</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7<br>PQRS</strong></td>
+<td style="text-align: center;"><strong>8<br>TUV</strong></td>
+<td style="text-align: center;"><strong>9<br>WXYZ</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;">*</td>
+<td style="text-align: center;"><strong>0</strong></td>
+<td style="text-align: center;">#</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">思路分析</h3>
+<p>本题是组合问题的变种题（虽然题目叫做电话字母组合，但是并没有什么真正的组合在里面）。我们需要修改backtracing/DFS算法，而不是生硬地套用模板。</p>
+<ol>
+<li>如果输入的数字串为空，返回空列表</li>
+<li>存储各个数字对应的字母</li>
+<li>对数字串逐位找出可以选用的每个字母，分别递归调用dfs</li>
+<li>当前位置达到数字串末尾时，将current添加到答案集合，回溯</li>
+</ol>
+<h3 id="_5">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">letterCombinations</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">digits</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 建立数字到字母的映射</span>
+<span class="w">    </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;def&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ghi&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;jkl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mno&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pqrs&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tuv&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wxyz&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 输入的数字串为空，返回空列表</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">digits</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">dfs</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">digits</span><span class="p">,</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">curt</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">digits</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="p">){</span>
+<span class="w">    </span><span class="c1">// 当前位置达到数字串末尾时，将current添加到答案集合</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">idx</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">digits</span><span class="p">.</span><span class="na">length</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">curt</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 找出可以选用的每个字母，分别递归调用dfs</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">digits</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">board</span><span class="o">[</span><span class="n">d</span><span class="o">]</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">dfs</span><span class="p">(</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">digits</span><span class="p">,</span><span class="w"> </span><span class="n">board</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_6">分析</h3>
+<p>时间复杂度O(4<sup>n</sup>)，空间复杂度O(4<sup>n</sup>)。每个数字最多对应4个可能的字母。</p>
+<h2 id="_7">总结</h2>
+<p>组合问题是数论类题目中最基础的一种。从本章的题目我们可以看出，对于数论类问题，大多数题目仅仅是以数学理论作为题目背景。题目本身依然是围绕DFS/BFS等基础算法出题。因此，对于面试时遇上数论题题目不需要过度紧张。解决这类题目不需要过于高深的数学知识，而是需要扎实的代码基础。</p>
+<p><img alt="5.png" src="resources/AD7F9632DB5AC6212DAFFA1ED724755B.png"></p></article></main>
+</div>
+</body>
+</html>

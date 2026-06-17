@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 0 - 算法复杂度分析</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a class="active" href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-0-">Day 0 - 算法复杂度分析</h1>
+<p>同一道问题可能有多种解决方案。自然地，我们会将多种方法进行比较。那么怎么样才能知道是A方法好，还是B方法好？这时候我们就需要对算法的复杂度进行分析。</p>
+<p>本章我们先介绍两个概念：时间复杂度与空间复杂度。并且用Two Sum作为案例，用时间空间复杂度分析Two Sum的三种解法</p>
+<h2 id="_1">时间复杂度</h2>
+<p>时间复杂度描述的是算法执行需要消耗的时间。同等条件下，消耗时间越少，算法性能越好。但是，算法执行的确切时间无法直接测量，通常只有在实际运行时才能知道。所以我们通过估算算法代码的方法来得到算法的时间复杂度。</p>
+<h2 id="_2">空间复杂度</h2>
+<p>空间复杂度描述的是算法在执行过程中所消耗的存储空间（内存+外存）。同等条件下，消耗空间资源越少，算法性能越好。</p>
+<h2 id="o">大O符号</h2>
+<p>大O符号是用于描述函数渐近行为的数学符号，在分析算法效率的时候非常有用。</p>
+<p>借用wikipedia上的一个例子，解决一个规模为n的问题所花费的时间可以表示为：T(n)=4n<sup>2</sup>+2n+1。当n增大时，n<sup>2</sup>项将开始占主导地位，而其他各项可以被忽略。比如当n=500，4n<sup>2</sup>项是2n项的1000倍大，因此在大多数场合下，省略后者对表达式的值的影响将是可以忽略不计的。</p>
+<p>长远来看，如果我们与任一其他级的表达式比较，n<sup>2</sup>项的系数也是无关紧要的。例如：一个包含n<sup>2</sup>项的表达式，即使T(n)=1,000,000n<sup>2</sup>，假定U(n)=n<sup>3</sup>，一旦n增长到大于1,000,000，后者就会一直超越前者。</p>
+<h2 id="two-sum">案例：Two Sum</h2>
+<blockquote>
+<p>给出一个整数数组nums和一个target整数，返回两个和为target的整数。</p>
+</blockquote>
+<p>假定我们正在面试，让我们用面试的方法来分析一下这道题。</p>
+<p>1.向面试官确认输入、输出
+通过询问面试官，我们可以知道：输入是一个int类型的数组和一个target；返回值是两个下标，并且以数组的形式返回；方法名没有特殊要求。这样一下我们就确定了函数的签名</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">twoSum</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Solution</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>2.向面试官确认输入、输出是否有特例</p>
+<p>接下来我们要确认一下输入输出的细节
++ 输入是否可以为空？
++ 输入的数组范围是正整数，还是任意范围？
++ 输入数组会不会特别大，甚至无法载入内存，比如300GB的数据量？
++ 如果输入不合法或者没有正确答案，我们已经返回空数组还是抛出异常？
++ 输入的数组中有重复么？如果没有重复，可以同一个数字用两次么？
++ 如果有多个解，那么返回第一个，还是所有解？
++ 你希望答案写成class，还是只提供方法本身即可？
++ ……</p>
+<p>有些问题即使题目中已经提到，最好还是再次向面试官确认。如果以上这些问题你没有想到的话，那么说明思路仅限于做题，缺乏面试的沟通技巧。可以多找小伙伴Mock面试，注意多交流。</p>
+<p>假设面试官告诉我们：只需要写函数本身。输入数组可能为空，但不会大到无法读进内存。数字的范围就是int类型的范围，可能有重复。对于不合法或者没有正确答案的情况，请自行判断。多个解法是，返回任意一个答案都可以。</p>
+<p>得到了这些信息，我们可以先进行防御性编程。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">twoSum</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nums</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// TODO: solution here</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>3.举几个例子</p>
+<p>接下来，我们可以要求面试官举几个例子，或者自己提出几个例子，来确保双方对题目没有异议。</p>
+<blockquote>
+<p>Example 1:
+Input: nums = [], target = 0
+Output: []</p>
+<p>Example 2:
+Input: nums = [2], target = 4
+Output: []</p>
+<p>Example 3:
+Input: nums = [2, 3, 4, 2], target = 6
+Output: [2, 4] or [4, 2]</p>
+<p>Example 4:
+Input: nums = [2, 7, 11, -2], target = 9
+Output: [2, 7] or [7, 2] or [11, -2] or [-2, 11]</p>
+</blockquote>
+<ul>
+<li>根据例子1、2，确定没有正确解时返回空数组。</li>
+<li>根据例子2，确定数字不可重复使用。</li>
+<li>
+<p>根据例子3、4，确定如果有多个合适的解，返回任意一个都可以。</p>
+</li>
+<li>
+<p>开始解题</p>
+</li>
+</ul>
+<p>完成了之前的步骤，需要找到正确的思路。这道题有三种思路，我们需要一一分析判断，找到合适的解法之后，和面试官进行讨论。得到面试官的允许之后，才可以开始写代码。（如果一上来就埋头解题，即使做对了也不能拿到最高评价。）</p>
+<h2 id="1-brute-force">解法1 Brute Force</h2>
+<p>没有具体思路的时候，暴力破解法应该是第一个想法。几乎任何后续更高效的算法都是在暴力破解法的基础上优化而来的。即使无法优化成功，一个可行解也好过一个高效但不可行的算法。</p>
+<p>对于Two Sum这道题，最直观的想法大概是找到所有可能的数字组合，挨个计算他们的和，返回第一个满足条件的组合。这种解法并没有什么技术含量，但是可以作为我们下一步优化的基础。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">twoSum</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">nums</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// O(N)</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">firstNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="c1">// 确定第一个可能的数字</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// O(N)</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">secondNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="c1">// 确定第二个可能的数字</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">firstNum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">secondNum</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">firstNum</span><span class="p">,</span><span class="w"> </span><span class="n">secondNum</span><span class="p">};</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>假设我们的输入大小为N（即nums的长度为N），for循环遍历每个数字时，假设每访问一个数字需要消耗的1个单位的时间，那么对于长度为N的数组，一共需要消耗N的时间。在计算机领域，我们使用大O记号来表示这种量化方法，将for循环的消耗记为O(N)。由于解法1中，我们使用了嵌套了两重for循环，这说明我们对于N个数字，每个数字除了消耗1个单位时间用于访问，还消耗了N个时间第二次遍历数组，总体的时间消耗为O(N<sup>2</sup>).</p>
+<h2 id="2-hashset">解法2 使用HashSet</h2>
+<p>反思解法1的步骤，我们利用了两重for循环。第一层for循环我们有不得不使用的理由：因为我们至少需要遍历每个数字。第二个for循环的目的是找到与firstNum相加等于target的数字，在这里我们又使用了for循环。如果有一种办法能够让我们记住已经见过的数字，并且在O(1)的时间内检查是否有数字与firstNum相加等于taget，那么就可以省下一个O(N)的for循环。</p>
+<p>有一个已知的数据结构可以解决这个问题——Set。Set对应数学意义上的集合，每个元素在集合中只出现一次，Set提供了add/remove/contains ... 等API，并且非常高效消耗均为O(1)。</p>
+<p>在遍历数组的过程中，每遇到一个新的数字num，计算target - num的值并记为potentialMatch。检查set中是否包含potentialMatch，如果包含说明存在这么一组数字对，他们的和等于target；如果不包含，那么将当前的num加入set，然后检查下一个数字。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">towSum</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// O(N)</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">potentialMatch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">num</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">set</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">potentialMatch</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// O(1)</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">potentialMatch</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">};</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">set</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">num</span><span class="p">);</span><span class="w"> </span><span class="c1">// 空间消耗增加O(1)</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这个方法利用了Set的特性：以O(1)的速度快速查询元素是否存在。从而省去了一个for循环，将时间复杂度降到了O(N)。但是Set消耗了额外的空间，在最差的情况下，Set可能保存了每一个数字但依旧返回了空数组。所以，解法二消耗了O(N)的空间和O(N)的时间。</p>
+<h2 id="3">解法3 使用排序</h2>
+<p>解法2利用了O(N)的额外空间去记录已经访问过的数组。那么是否存在一种办法可以不消耗额外的空间，同时提供高效地查询。</p>
+<p>当然没有这种好事😭……</p>
+<p>除非我们做一步预处理：将输入的数组排序处理。比如下图的例子：nums = [2, 4, 9, 7, 1], target = 6</p>
+<p><img alt="two pointers" src="resources/841E26DCB8DE49EEADE94955A9021D23.png"></p>
+<ol>
+<li>先将原数组进行排序(这里可以使用编程语言自带的排序方法)</li>
+<li>创建left、right两根指针。left指向第一位，right指向最后一位</li>
+<li>只要left和right不重合，循环比较left、right指向的两个数字的和sum：<ul>
+<li>如果sum等于target，那么left、right所指向的数字就是我们要找的结果</li>
+<li>如果sum大于target，那么将right向左移动一位，让下一个sum变小</li>
+<li>如果sum小于target，那么将left向右移动一位，让下一个sum变大</li>
+</ul>
+</li>
+<li>当循环结束，依旧没有答案，说明没有正确解</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">twoSum</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Arrays</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span><span class="w"> </span><span class="c1">// O(NlogN)</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// O(N)</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">left</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">right</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sum</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">            </span><span class="c1">// 如果sum等于target，那么left、right所指向的数字就是我们要找的结果</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="p">{</span><span class="n">nums</span><span class="o">[</span><span class="n">left</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">right</span><span class="o">]</span><span class="p">};</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sum</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 如果sum小于target，那么将left向右移动一位，让下一个sum变大</span>
+<span class="w">            </span><span class="n">left</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sum</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">target</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 如果sum大于target，那么将right向左移动一位，让下一个sum变小</span>
+<span class="w">            </span><span class="n">right</span><span class="o">--</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>这个算法的优势在于每次只会让较大的值减小、或者较小的值增大，得到的sum是连续的。如果存在正确的解，就一定可以找到对应的left和right。left、right的单调移动，每次会排除一部分错误答案，减小搜索空间，而且保证了数组中每个数字仅被访问一次，消耗是O(N)的。但是在预处理的时候使用了排序，所以会有O(NlogN)的时间消耗。总体上消耗了O(NlogN)的时间和O(1)的空间。缺点是改变了原数组的元素位置。</p>
+<h2 id="-">时间-空间的取舍</h2>
+<p>让我们来回顾这三种解法：
++ 解法1消耗了O(N<sup>2</sup>)的时间和O(1)的空间
++ 解法2消耗了O(N)的时间和O(N)的空间
++ 解法3消耗了O(NlogN)的时间和O(1)的空间</p>
+<p>与解法1的暴力算法相比，解法2是用了空间换时间，增加了Set的消耗，减短了查询的消耗。解法3则相反，用了时间换空间，通过原地排序，省去了Set。这两类操作统称space-time trade-off 空间-时间权衡。</p>
+<p>通过对算法的复杂度分析，我们有了量化算法效率的方法。我们可以明确地指出，解法2比解法1更好，解法3比解法2消耗更少的内存。</p>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>关键信息</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>array</td>
+<td>通过下标访问O(1)，查询O(N)，插入O(N)，删除O(N)</td>
+</tr>
+<tr>
+<td>string</td>
+<td>在内存中的形式与array等价</td>
+</tr>
+<tr>
+<td>linked list</td>
+<td>通过下标访问O(N)，查询O(N)，插入O(1)，删除O(1)</td>
+</tr>
+<tr>
+<td>stack</td>
+<td>last-in first-out，在内存中的形式等价于linked list</td>
+</tr>
+<tr>
+<td>queue</td>
+<td>first-in first-out，在内存中的形式等价于linked list</td>
+</tr>
+<tr>
+<td>heap</td>
+<td>查询极值O(1)，插入O(logN)，删除极值O(N)</td>
+</tr>
+<tr>
+<td>hash table</td>
+<td>插入、删除、查询O(1)</td>
+</tr>
+<tr>
+<td>binary search tree</td>
+<td>插入、删除、查询、找最大最小值、访问前驱结点、访问后继节点均为O(1)</td>
+</tr>
+</tbody>
+</table>
+<p>大多数情况下，算法的过程是基于对基础数据结构的操作。因此分析算法复杂度也要求我们掌握常见的数据结构。上表给出了常用数据结构和操作的时间复杂度。记住这张表，能帮助我们更快的分析一个新算法的复杂度。</p>
+<h2 id="_3">习题</h2>
+<p>Two Sum有另一种版本不同于上文中的例题，要求返回的是数字的下标，与例题略有不同，非常适合作为习题</p></article></main>
+</div>
+</body>
+</html>

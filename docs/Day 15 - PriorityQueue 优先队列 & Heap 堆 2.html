@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a class="active" href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-15-priorityqueue">Day 15 - PriorityQueue 优先队列</h1>
+<h2 id="_1">章节导读</h2>
+<p>上节课我们介绍了优先队列和二叉堆的基础知识，并且重点介绍了堆的经典考察模板之一：Top K问题。这节课我们来看看堆的另一种经典考察模板：k路合并。</p>
+<h2 id="k">核心算法——k路合并</h2>
+<p>k路合并一般会涉及到多个已排序的链表或者数组。这类题的特征比较明显，一旦出现K个排序好的列表，我们大概率可以利用堆来进行高效遍历：</p>
+<ol>
+<li>初始化一个最小堆</li>
+<li>将所有的列表的第一个（最小的）元素加入堆中</li>
+<li>从堆中弹出一个最小的元素（这个元素就是当前的全局最小元素），将该元素的下一位插入堆中</li>
+<li>重复步骤3直到堆为空</li>
+</ol>
+<h2 id="1-k">1.案例: k路合并</h2>
+<blockquote>
+<p>合并k个排序链表，并且返回合并后的排序链表。</p>
+</blockquote>
+<h3 id="_2">思路分析</h3>
+<p>本题是2.2节中合并链表题的进阶题。原题要求我们合并两个已排序的链表。当时我们使用两根指针p1, p2分别指向两个链表的表头，并且依据两根指针类题目中“谁小移谁”的思路。每次比较p1和p2的值，取出值较小的那个，append在新链表的结尾。然后将指针移到下一位，直到结尾。</p>
+<p>本题升级成了k个链表，我们遵循同样的思路。将所有链表的表头加入一个最小堆，最小堆会我们完成“谁小移谁”的部分。我们每次从最小堆中取出当前最小的表头，加入新链表的结尾。然后将该链表的表头移到下一位，重新加入最小堆，直到最小堆为空。</p>
+<p><img alt="1.png" src="resources/B044516CE19C0A79A106420A86CAC6EC.png"></p>
+<ol>
+<li>将所有的列表的第一个（最小的）元素加入堆中</li>
+</ol>
+<p><img alt="2.png" src="resources/3BC493B650AA8EFBE7A234E0FBB673CB.png"></p>
+<ol>
+<li>从堆中弹出一个最小的元素（这个元素就是当前的全局最小元素），将该元素的下一位插入堆中</li>
+</ol>
+<p><img alt="3.png" src="resources/D28741B1AA4B87D1357EBF225ECCAD1C.png"></p>
+<ol>
+<li>重复上一步：从堆中弹出一个最小的元素，将该元素的下一位插入堆中</li>
+</ol>
+<p><img alt="4.png" src="resources/CA0D2454DEF09A62C802F8765F78246E.png"></p>
+<ol>
+<li>最终当堆为空时，得到合并后的排序链表</li>
+</ol>
+<h3 id="_3">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">ListNode</span><span class="w"> </span><span class="nf">mergeKLists</span><span class="p">(</span><span class="n">ListNode</span><span class="o">[]</span><span class="w"> </span><span class="n">lists</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 维护一个最小堆</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">ListNode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">heap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">((</span><span class="n">l1</span><span class="p">,</span><span class="w"> </span><span class="n">l2</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">l1</span><span class="p">.</span><span class="na">val</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">l2</span><span class="p">.</span><span class="na">val</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 将所有链表的表头加入最小堆</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ListNode</span><span class="w"> </span><span class="n">list</span><span class="p">:</span><span class="w"> </span><span class="n">lists</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">list</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w">   </span><span class="n">heap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">list</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">dummy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ListNode</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// 创建dummy node</span>
+<span class="w">    </span><span class="n">ListNode</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dummy</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">heap</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 每次从最小堆中取出当前最小的表头</span>
+<span class="w">        </span><span class="n">ListNode</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 加入新链表的结尾</span>
+<span class="w">        </span><span class="n">tail</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curt</span><span class="p">;</span>
+<span class="w">        </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curt</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 将该链表的表头移到下一位，重新加入最小堆</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">next</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<span class="w">            </span><span class="n">heap</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">next</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dummy</span><span class="p">.</span><span class="na">next</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_4">分析</h3>
+<p>时间复杂度O(n logk)，空间复杂度O(k)。k是链表的个数，也是最小堆的大小。</p>
+<h2 id="2-k">2.案例: 有序矩阵中的第K小元素</h2>
+<blockquote>
+<p>给定一个 n x n 矩阵，每一行和每一列都按照升序排序，找出矩阵中的第k小元素。</p>
+<p>输入: K=5
+[[2, 6, 8],
+[3, 7, 10],
+[5, 8, 11]]
+输出: 7</p>
+</blockquote>
+<h3 id="_5">思路分析</h3>
+<p>本题给定了一个n x n的矩阵，并且每行每列都是按升序排列的，我们可以等价的看成n个已排序的列表。为了在n个已排序的列表中找到第k小的元素，我们利用k路合并法遍历这n个已排序列表。</p>
+<p>不同于上一题，本题的输入列表是一组数组。为了完成遍历，我们需要额外建立一个数据结构，保存遍历过程中的当前位置(col &amp; row)和当前位置指向的数值(value)。将所有行的第一个位置加入最小堆，然后利用k路合并法遍历。不停弹出元素，直到第k个最小元素出现。</p>
+<h3 id="_6">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 建立一个数据结构</span>
+<span class="kd">class</span> <span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 保存遍历过程中的当前位置和数值</span>
+<span class="w">    </span><span class="n">Node</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+<span class="w">        </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">        </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">kthSmallest</span><span class="p">(</span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">matrix</span><span class="p">.</span><span class="na">length</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 维护一个按照当前数值排列的最小堆</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">heap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">((</span><span class="n">node1</span><span class="p">,</span><span class="w"> </span><span class="n">node2</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">node1</span><span class="p">.</span><span class="na">value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">node2</span><span class="p">.</span><span class="na">value</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 将所有行的第一个位置加入最小堆</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">        </span><span class="n">heap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">matrix</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 弹出前k-1个值</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Node</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 将该位置的下一位加入最小堆，如果已经到达当前行的最末一位则跳过</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">col</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">            </span><span class="n">heap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">row</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">col</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">matrix</span><span class="o">[</span><span class="n">curt</span><span class="p">.</span><span class="na">row</span><span class="o">][</span><span class="n">curt</span><span class="p">.</span><span class="na">col</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">]</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 返回第k个值</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">heap</span><span class="p">.</span><span class="na">peek</span><span class="p">().</span><span class="na">value</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_7">分析</h3>
+<p>时间复杂度O(n logn)，空间复杂度O(n)</p>
+<p>使用最小堆的解法只利用了每行的升序，并没有利用列升序的信息。本题还有一种使用二分搜索的解法，利用了每行和每列的信息，感兴趣的读者可以作为习题。</p>
+<h2 id="3">3.案例: 最小范围</h2>
+<blockquote>
+<p>给定m个已排序的数组，找到一个最小范围，最小范围中包含每个数组的至少一个数。</p>
+<p>输入: L1=[1, 5, 8], L2=[4, 12], L3=[7, 8, 10]
+输出: [4, 7]</p>
+</blockquote>
+<h3 id="_8">思路分析</h3>
+<p>为了寻找最小范围，我们需要同时确定范围的起点start和终点end。因为要满足最小范围中包含每个数组的至少一个数，并且数组已排序，我们可以将所有行的第一个位置加入最小堆，然后利用k路合并法遍历。同样是额外建立一个数据结构，保存遍历过程中的当前位置和数值。</p>
+<p>一个比较直观的认知是我们要找的范围是由最小堆里的最小值和最大值确定的，这两个值分别是范围的起点start和终点end。我们通过比较每一个插入堆的值，记录下最大的那个作为end。每一步从堆中取出的最小元素作为start，和上一步的end组成当前的范围，这个范围包含每个数组的至少一个数。我们通过一个额外的数组记录范围，并且每次获得新的范围都和之前的进行比较，最终得到所有范围中最小的。</p>
+<h3 id="_9">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 建立一个数据结构</span>
+<span class="kd">class</span> <span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 保存遍历过程中的当前位置和数值</span>
+<span class="w">    </span><span class="n">Node</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">smallestRange</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">nums</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 维护一个按照当前数值排列的最小堆</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">heap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">((</span><span class="n">node1</span><span class="p">,</span><span class="w"> </span><span class="n">node2</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">node1</span><span class="p">.</span><span class="na">value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">node2</span><span class="p">.</span><span class="na">value</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">MIN_VALUE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 将所有列表的第一个位置加入最小堆</span>
+<span class="w">        </span><span class="n">heap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">// 通过比较每一个插入堆的值，记录下最大的</span>
+<span class="w">        </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 一个额外的数组记录范围</span>
+<span class="w">    </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">heap</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 每一步从堆中取出的最小元素</span>
+<span class="w">        </span><span class="n">Node</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 每次获得新的范围都和之前的进行比较</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ans</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ans</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ans</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">value</span><span class="p">)</span>
+<span class="w">            </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">curt</span><span class="p">.</span><span class="na">value</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">};</span>
+<span class="w">        </span><span class="c1">// 如果到达当前列表的结尾，那么后面出现的range一定比现在大，结束循环</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">x</span><span class="p">).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">  </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">x</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 将该位置的下一位加入最小堆</span>
+<span class="w">        </span><span class="n">heap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">x</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">// 比较每一个插入堆的值，记录下最大的</span>
+<span class="w">        </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 最终得到所有范围中最小的</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_10">分析</h3>
+<p>时间复杂度O(n logm)，空间复杂度O(m)。n是总共元素的个数，也是输入大小。m是列表的个数。</p>
+<h2 id="4-k">4.案例: 查找和最小的K对数字</h2>
+<blockquote>
+<p>给定两个以升序排列的数组, 找到和最小的k对数字。每对数字有两个来自不同数组的数字组成。</p>
+<p>输入: L1=[2,8,9], L2=[1,3,6], K=3
+输出: [[2,1],[2,3],[2,6]]</p>
+</blockquote>
+<h3 id="_11">思路分析</h3>
+<p>本题涉及到两个已排序的数组，直觉上我们可以利用k路合并法遍历。但是仔细一想会发现遍历没什么用处。因为这其实是一道Top K类的问题。我们可以枚举所有成对的数字组合，加入最大堆中，然后选取最小的k对。</p>
+<p>套用Top K模板：
+1. 维护一个最大堆，用于比较每对数字之和
+2. 枚举所有成对的数字组合，加入最大堆中
+3. 如果堆的大小超过k，那么弹出最小元素，保证堆大小不超过k。
+4. 遍历完成后，堆里保存着最小的K对数字</p>
+<p>本题是为了提醒大家不要看到多个已排序的数组，就直接开始k路合并。还是应该认真分析题目的含义，以免走入思维误区。</p>
+<h3 id="_12">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nf">kSmallestPairs</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums2</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 维护一个最大堆，比较每对数字之和</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">maxHeap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">(</span>
+<span class="w">        </span><span class="p">(</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">p2</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">p2</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">p1</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)));</span>
+<span class="w">    </span><span class="c1">//枚举所有成对的数字组合</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">nums2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">maxHeap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">));</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">maxHeap</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="c1">// 堆的大小超过k，那么弹出最小元素</span>
+<span class="w">                </span><span class="n">maxHeap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 返回堆里保存着最小的K对数字</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">maxHeap</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_13">分析</h3>
+<p>时间复杂度O(n<sup>2</sup> logk)，空间复杂度O(k). n是输入数组的大小，遍历两个数组枚举所有成对的数字组合需要O(n<sup>2</sup>). k是堆的大小，每次插入和移除消耗O(logk)</p>
+<h2 id="_14">总结</h2>
+<p>这节课我们介绍了堆的第二种经典考察模板：k路合并，并且与上一节的Top K问题进行了比较。k路合并的基本特征是出现K个排序好的列表，并且需要我们进行遍历。</p>
+<p><img alt="5.png" src="resources/495A38EDAC30552F9656CA28644B4A07.png"></p>
+<h2 id="_15">习题</h2>
+<ol>
+<li>使用二分法查找有序矩阵中的第K小元素</li>
+<li>查找和最大的K对数字：给定两个以降序排列的数组, 找到和最大的k对数字</li>
+</ol></article></main>
+</div>
+</body>
+</html>

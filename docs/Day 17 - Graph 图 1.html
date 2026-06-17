@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 17 - Graph 图 1</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a class="active" href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-17-graph-1">Day 17 - Graph 图 1</h1>
+<p>在之前的章节中，其实我们已经见识过一些图的问题了。链表、树、甚至数组都是图论问题的一小部分。树是图的子集，而链表又是树的子集。这节课开始我们将从特例推广到一般，来学习图论的知识。</p>
+<h2 id="_1">基础知识——图与树</h2>
+<p>在之前的章节里我们已经学习了树，尤其是二叉树。在图论中，树是一种连通图，其中任意两个顶点间存在唯一一条路径。下面这张图，其实也是一棵树。</p>
+<p><img alt="1.png" src="resources/F40FB04FE0FC24B5CADE270442E1A272.png"></p>
+<p><em>图片由visualgo制作</em></p>
+<p>如果在树的基础上加上环路，那么就会变成图。</p>
+<p><img alt="2.png" src="resources/9AA4F2C30CAAB68D5DE808AC459986FA.png"></p>
+<p><em>图片由visualgo制作</em></p>
+<p>从面试题的角度来看，树类问题是链表问题的进阶，图类问题是树类问题的进阶。</p>
+<h2 id="_2">基础知识——树搜索</h2>
+<p>我们之前学习了BFS和DFS两种搜索算法。树类搜索有一种通用模板，我们用伪代码来描述。</p>
+<p>首先我们先约定每个节点的结构：每个节点包含当前节点的值value，一个children列表包含所有当前节点的子节点（子节点可能有0个或多个）</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">children</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>假设我们要在一棵树上寻找一个target节点。我们定义tree_search函数，函数接收根节点root、目标节点target、数据队列sequence。</p>
+<p>这里要注意数据队列sequence并不是指Queue结构，sequence代表了数据接收和处理的顺序。</p>
+<ul>
+<li>当sequence时LIFO队列时，表现为Stack。</li>
+<li>当sequence时FIFO队列时，表现为Queue。</li>
+</ul>
+<p>数据队列sequence通过add向结构中添加一个元素，通过remove从结构中取出一个元素。</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 接收根节点root、目标节点target、数据队列sequence</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">tree_search</span><span class="p">(</span><span class="nx">sequence</span><span class="p">,</span><span class="w"> </span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="nx">sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">root</span><span class="p">}</span><span class="w"> </span><span class="c1">// 初始化sequence，并向其中添加root节点</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="nx">sequence</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="nx">not</span><span class="w"> </span><span class="nx">empty</span><span class="o">:</span><span class="w"> </span><span class="c1">// 当sequence中还有元素存在是</span>
+<span class="w">    </span><span class="nx">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sequence</span><span class="p">.</span><span class="nx">remove</span><span class="p">()</span><span class="w"> </span><span class="c1">// 从sequence中取出一个元素</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">curt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">target</span><span class="o">:</span><span class="w"> </span><span class="c1">// 如果遇上target，说明找到目标</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">Node</span><span class="w"> </span><span class="nx">child</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">curt</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span><span class="w"> </span><span class="c1">// 扩展搜索的范围</span>
+<span class="w">      </span><span class="nx">sequence</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span><span class="w"> </span><span class="c1">// 将当前节点所有的子节点添加进sequence</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="c1">// 当sequence为空时还没有找到target</span>
+
+<span class="c1">// 如果将Queue传入tree_search</span>
+<span class="c1">// sequence将按照FIFO先进先出的顺序添加和弹出元素，会得到BFS算法</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">breadth_first_search</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">tree_search</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Queue</span><span class="p">(),</span><span class="w"> </span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">)</span>
+
+<span class="c1">// 如果将Stack传入tree_search</span>
+<span class="c1">// sequence将按照LIFO后进先出的顺序添加和弹出元素，会得到DFS算法</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">depth_first_search</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">tree_search</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Stack</span><span class="p">(),</span><span class="w"> </span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">)</span>
+</code></pre></div>
+
+<p>有了通用的tree_search模板，我们可以发现BFS和DFS的区别仅在于他们处理元素的顺序。tree_search的初始搜索范围只有root。访问root之后，会将root的所有的子节点添加进sequence，这一步叫做expanding path。随后我们会从sequence取出新的元素，进入下一步搜索。通过向tree_search传入不同的队列结构(Stack/Queue)影响expanding path的过程，而expanding path将决定访问的顺序是DFS还是BFS。</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>顺序</th>
+<th>数据结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DFS深度优先</td>
+<td>LIFO后进先出</td>
+<td>Stack</td>
+</tr>
+<tr>
+<td>BFS广度优先</td>
+<td>FIFO先进先出</td>
+<td>Queue</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">基础知识——图搜索</h2>
+<p>之前我们说过树是一种特殊的图，树没有环路。如果在树的基础上加上环路，那么就会变成图。与树搜索类似，图搜索也存在有一种通用模板。</p>
+<p>我们重新约定节点的结构：每个节点除了包含当前节点的值value，还有一个neighbors列表。与树不同的是，因为图可以有环路，节点甚至可以指向自己，所以节点之间不存在上下级关系。neighbors列表可以包含0个或多个邻居节点。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">neighbors</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>假设我们要在图上寻找一个目标节点。我们定义graph_search函数，函数接收起点src、目标节点dst、数据队列sequence。</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 接收起点src、目标节点dst、数据队列sequence</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">graph_search</span><span class="p">(</span><span class="nx">sequence</span><span class="p">,</span><span class="w"> </span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="nx">sequence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">src</span><span class="p">}</span><span class="w"> </span><span class="c1">// 初始化sequence，并向其中添加起点src</span>
+<span class="w">  </span><span class="nx">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="c1">// 因为图可以有环路，我们需要一个visited集合来记录已经访问过的节点</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="nx">sequence</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="nx">not</span><span class="w"> </span><span class="nx">empty</span><span class="o">:</span><span class="w"> </span><span class="c1">// 当sequence中还有元素存在是</span>
+<span class="w">    </span><span class="nx">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sequence</span><span class="p">.</span><span class="nx">remove</span><span class="p">()</span><span class="w"> </span><span class="c1">// 从sequence中取出一个元素</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">curt</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">visited</span><span class="o">:</span><span class="w"> </span><span class="c1">// 避免重复访问</span>
+<span class="w">      </span><span class="k">continue</span>
+<span class="w">    </span><span class="nx">visited</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">curt</span><span class="p">)</span><span class="w"> </span><span class="c1">// 将curt添加到visited，表示已经访问过</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">curt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">dst</span><span class="o">:</span><span class="w"> </span><span class="c1">// 找到目标</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">Node</span><span class="w"> </span><span class="nx">next</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">curt</span><span class="p">.</span><span class="nx">neighbors</span><span class="p">)</span><span class="w"> </span><span class="c1">// 将当前节点相邻的节点添加进sequence</span>
+<span class="w">      </span><span class="nx">sequence</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">next</span><span class="p">)</span><span class="w"> </span><span class="c1">// 扩展搜索的范围</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="c1">// 当sequence为空时还没有找到</span>
+
+<span class="c1">// 如果将Queue传入graph_search，会得到BFS算法</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">breadth_first_search</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">graph_search</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Queue</span><span class="p">(),</span><span class="w"> </span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span>
+
+<span class="c1">// 如果将Stack传入graph_search，会得到DFS算法</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">depth_first_search</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">graph_search</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">Stack</span><span class="p">(),</span><span class="w"> </span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span>
+
+<span class="c1">// 如果将PriorityQueue传入tree_search</span>
+<span class="c1">// sequence将按照每条路径的权重向外扩展节点</span>
+<span class="c1">// 会得到Uniform-Cost Search算法（Dijkstra算法）</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">uniform_cost_search</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span><span class="o">:</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">tree_search</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="nx">PriorityQueue</span><span class="p">(),</span><span class="w"> </span><span class="nx">src</span><span class="p">,</span><span class="w"> </span><span class="nx">dst</span><span class="p">)</span>
+</code></pre></div>
+
+<p>图搜索与树搜索基本相同，仅仅由于图可能存在环路，所以我们需要额外的visited集合记录访问过的节点。同样我们通过向graph_search传入不同的队列结构(Stack/Queue/PriorityQueue)影响expanding path的过程，而expanding path将决定访问的顺序为DFS/BFS/UCS。</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>顺序</th>
+<th>数据结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DFS深度优先</td>
+<td>LIFO后进先出</td>
+<td>Stack</td>
+</tr>
+<tr>
+<td>BFS广度优先</td>
+<td>FIFO先进先出</td>
+<td>Queue</td>
+</tr>
+<tr>
+<td>UCS一致代价搜索</td>
+<td>根据权重弹出</td>
+<td>PriorityQueue</td>
+</tr>
+</tbody>
+</table>
+<p>Uniform-Cost Search一致代价搜索算法是Dijkstra算法的变种之一，几乎所有考察Dijkstra算法的面试题都可以用UCS算法来解决。</p>
+<h2 id="1-dfs">1.案例: DFS</h2>
+<blockquote>
+<p>给定一张图，在图上运行DFS，打印所有节点</p>
+</blockquote>
+<h3 id="_4">思路分析</h3>
+<p>图上的DFS与树上的DFS算法相似，只需要加入额外的visited集合记录已经访问过的节点，重复访问。</p>
+<p>在图上运行DFS的效果如下：
+<img alt="3.gif" src="resources/42D064A485442A9E162986AC846812B7.gif">
+<em>图片由visualgo制作</em></p>
+<h3 id="_5">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">depthFirstSearch</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="n">Node</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建一个Stack作为LIFO队列</span>
+<span class="w">    </span><span class="n">Stack</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Stack</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// visited集合记录已经访问过的节点</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 从起点src出发</span>
+<span class="w">    </span><span class="n">stack</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">stack</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 从LIFO队列中取出一个元素</span>
+<span class="w">        </span><span class="n">Node</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="na">pop</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 避免重复访问</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">visited</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">array</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">current</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// expanding path: 将当前节点相邻的节点添加进LIFO队列</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Node</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">current</span><span class="p">.</span><span class="na">neighbors</span><span class="p">)</span>
+<span class="w">            </span><span class="n">stack</span><span class="p">.</span><span class="na">push</span><span class="p">(</span><span class="n">next</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">array</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_6">分析</h3>
+<p>时间复杂度O(v+e)，空间复杂度O(v)，v代表节点个数，e代表边的个数。每个节点仅访问一次所以Stack和Set的空间消耗为O(v)。每条边可能访问一次，时间复杂度O(v+e)。</p>
+<h2 id="2-bfs">2.案例: BFS</h2>
+<blockquote>
+<p>给定一张图，在图上运行BFS，打印所有节点</p>
+</blockquote>
+<h3 id="_7">思路分析</h3>
+<p>图上的BFS与树上的BFS算法相似，只需要加入额外的visited集合记录已经访问过的节点，重复访问。</p>
+<p>在图上运行BFS的效果如下：
+<img alt="4.gif" src="resources/1DD386C0C19997C94122768D3608B4EA.gif">
+<em>图片由visualgo制作</em></p>
+<h3 id="_8">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">breadthFirstSearch</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="n">Node</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建一个Queue作为FIFO队列</span>
+<span class="w">    </span><span class="n">Queue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// visited集合记录已经访问过的节点</span>
+<span class="w">    </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visited</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 从起点src出发</span>
+<span class="w">    </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">src</span><span class="p">);</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">queue</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 从FIFO队列中取出一个元素</span>
+<span class="w">        </span><span class="n">Node</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 避免重复访问</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">visited</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">current</span><span class="p">))</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">array</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">current</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// expanding path: 将当前节点相邻的节点添加进FIFO队列</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Node</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">current</span><span class="p">.</span><span class="na">neighbors</span><span class="p">)</span>
+<span class="w">            </span><span class="n">queue</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">next</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">array</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_9">分析</h3>
+<p>时间复杂度O(v+e)，空间复杂度O(v)，v代表节点个数，e代表边的个数。每个节点仅访问一次所以Queue和Set的空间消耗为O(v)。每条边可能访问一次，时间复杂度O(v+e)。</p>
+<p>UCS(Dijkstra)算法适用于有权重的图。在没有权重时，每条边权重为1，UCS(Dijkstra)算法退化成BFS算法（PriorityQueue中权重相等，按照元素加入的顺序弹出，退化成Queue）。</p>
+<h2 id="_10">总结</h2>
+<p>本节课我们对比了树和图的概念，总结了树搜索通用算法模板和图搜索通用算法模板，统一DFS和BFS算法。本质上这些不同的遍历方式都符合图遍历的定义，唯一的区别在于使用不同的队列导致expending path的顺序有所不同。</p>
+<p><img alt="5.png" src="resources/D35D61526D777DAF400F07DFD2BA3AAD.png"></p></article></main>
+</div>
+</body>
+</html>

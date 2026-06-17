@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 22 Array 数组 &amp; String 字符串 2</title>
+<style>
+:root {
+  --preview-bg: #fffdf7;
+  --preview-nav-bg: #f7f2e8;
+  --preview-ink: #171513;
+  --preview-muted: #635f58;
+  --preview-line: rgba(23, 21, 19, 0.14);
+  --preview-hover: rgba(229, 75, 55, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--preview-bg);
+  color: var(--preview-ink);
+}
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.preview-nav {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow: auto;
+  padding: 16px 14px;
+  border-right: 1px solid var(--preview-line);
+  background: var(--preview-nav-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+}
+
+.preview-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 6px;
+  color: #2a2620;
+  font-size: 14px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.preview-nav a:hover,
+.preview-nav a.active {
+  background: var(--preview-hover);
+  color: var(--preview-ink);
+}
+
+.preview-nav a.active {
+  font-weight: 800;
+}
+
+.preview-nav .preview-title {
+  margin: 0 0 10px;
+  padding: 10px 9px 13px;
+  border-bottom: 1px solid rgba(23, 21, 19, 0.16);
+  border-radius: 0;
+  color: var(--preview-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.preview-main {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 34px);
+}
+
+.preview-doc {
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  line-height: 1.72;
+}
+
+.preview-doc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview-doc pre {
+  overflow-x: auto;
+}
+
+.preview-doc a {
+  color: #2f6fcb;
+}
+
+.main-content-wrap,
+.main-content,
+.main-content .fastpass-page {
+  max-width: none;
+}
+
+@media (max-width: 860px) {
+  .preview-layout {
+    display: block;
+  }
+
+  .preview-nav {
+    position: relative;
+    height: auto;
+    max-height: 230px;
+  }
+
+  .preview-main {
+    padding: 14px;
+  }
+}
+</style>
+<style>
+  :root {
+    --code-bg: #171513;
+    --code-panel: #211d19;
+    --code-line: rgba(255, 255, 255, 0.14);
+    --code-text: #f8efe3;
+    --code-muted: #9e968d;
+    --code-keyword: #ff7b72;
+    --code-type: #ffd166;
+    --code-function: #7dd3fc;
+    --code-string: #a7f3d0;
+    --code-number: #c4b5fd;
+    --code-comment: #8a8178;
+    --code-operator: #fbbf24;
+  }
+
+  .language-java.highlighter-rouge,
+  .language-js.highlighter-rouge,
+  .codehilite {
+    position: relative;
+    margin: 1.2rem 0;
+    overflow: hidden;
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    background: var(--code-bg);
+    box-shadow: 0 14px 34px rgba(23, 21, 19, 0.18);
+  }
+
+  .language-java.highlighter-rouge::before,
+  .language-js.highlighter-rouge::before,
+  .codehilite::before {
+    display: block;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--code-line);
+    background:
+      linear-gradient(90deg, rgba(255, 209, 102, 0.12), transparent 38%),
+      var(--code-panel);
+    color: var(--code-muted);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    content: "Java";
+  }
+
+  .language-js.highlighter-rouge::before {
+    content: "JavaScript";
+  }
+
+  .codehilite.language-js::before {
+    content: "JavaScript";
+  }
+
+  .highlight,
+  .codehilite {
+    background: var(--code-bg);
+  }
+
+  .highlight pre,
+  .codehilite pre,
+  pre.highlight {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    tab-size: 4;
+  }
+
+  .highlight code,
+  .codehilite code,
+  pre.highlight code {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr,
+  .highlight .ow,
+  .codehilite .k,
+  .codehilite .kd,
+  .codehilite .kn,
+  .codehilite .kp,
+  .codehilite .kr,
+  .codehilite .ow {
+    color: var(--code-keyword);
+    font-weight: 700;
+  }
+
+  .highlight .kt,
+  .highlight .nc,
+  .highlight .nn,
+  .codehilite .kt,
+  .codehilite .nc,
+  .codehilite .nn {
+    color: var(--code-type);
+    font-weight: 700;
+  }
+
+  .highlight .nf,
+  .highlight .na,
+  .highlight .fm,
+  .codehilite .nf,
+  .codehilite .na,
+  .codehilite .fm {
+    color: var(--code-function);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sc,
+  .highlight .se,
+  .codehilite .s,
+  .codehilite .s1,
+  .codehilite .s2,
+  .codehilite .sc,
+  .codehilite .se {
+    color: var(--code-string);
+  }
+
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .il,
+  .codehilite .mi,
+  .codehilite .mf,
+  .codehilite .mh,
+  .codehilite .il {
+    color: var(--code-number);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cp,
+  .codehilite .c,
+  .codehilite .c1,
+  .codehilite .cm,
+  .codehilite .cp {
+    color: var(--code-comment);
+    font-style: italic;
+  }
+
+  .highlight .o,
+  .highlight .p,
+  .codehilite .o,
+  .codehilite .p {
+    color: var(--code-operator);
+  }
+
+  .highlight .na,
+  .highlight .nd,
+  .codehilite .na,
+  .codehilite .nd {
+    color: #f0abfc;
+  }
+
+  @media (max-width: 640px) {
+    .highlight pre,
+    .codehilite pre,
+    pre.highlight {
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="preview-layout">
+<nav class="preview-nav" aria-label="教程导航"><a class="preview-title" href="../">28 天速通 LeetCode</a>
+<a href="Day 0 - 算法复杂度分析.html">Day 0 - 算法复杂度分析</a>
+<a href="Day 1 - Linked List 链表1.html">Day 1 - Linked List 链表1</a>
+<a href="Day 2 - Linked List 链表2.html">Day 2 - Linked List 链表2</a>
+<a href="Day 3 - Linked List 链表3.html">Day 3 - Linked List 链表3</a>
+<a href="Day 4 - Array 数组1.html">Day 4 - Array 数组1</a>
+<a href="Day 5 - Array 数组2.html">Day 5 - Array 数组2</a>
+<a href="Day 6 - Array 数组3.html">Day 6 - Array 数组3</a>
+<a href="Day 7 - Tree 树.html">Day 7 - Tree 树</a>
+<a href="Day 8 - BST 二叉树1.html">Day 8 - BST 二叉树1</a>
+<a href="Day 9 - BST 二叉树2.html">Day 9 - BST 二叉树2</a>
+<a href="Day 10 - BST 二叉树3.html">Day 10 - BST 二叉树3</a>
+<a href="Day 11 - BST 二叉树4.html">Day 11 - BST 二叉树4</a>
+<a href="Day 12 - Stack 栈.html">Day 12 - Stack 栈</a>
+<a href="Day 13 - Queue 队列.html">Day 13 - Queue 队列</a>
+<a href="Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1.html">Day 14 - PriorityQueue 优先队列 &amp; Heap 堆 1</a>
+<a href="Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2.html">Day 15 - PriorityQueue 优先队列 &amp; Heap 堆 2</a>
+<a href="Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3.html">Day 16 - PriorityQueue 优先队列 &amp; Heap 堆 3</a>
+<a href="Day 17 - Graph 图 1.html">Day 17 - Graph 图 1</a>
+<a href="Day 18 - Graph 图 2.html">Day 18 - Graph 图 2</a>
+<a href="Day 19 - Graph 图 3.html">Day 19 - Graph 图 3</a>
+<a href="Day 20 - Graph 图 4.html">Day 20 - Graph 图 4</a>
+<a href="Day 21 Array 数组 &amp; String 字符串 1.html">Day 21 Array 数组 &amp; String 字符串 1</a>
+<a class="active" href="Day 22 Array 数组 &amp; String 字符串 2.html">Day 22 Array 数组 &amp; String 字符串 2</a>
+<a href="Day 23 Array 数组 &amp; String 字符串 3.html">Day 23 Array 数组 &amp; String 字符串 3</a>
+<a href="Day 24 String 字符串 4.html">Day 24 String 字符串 4</a>
+<a href="Day 25 Combination 组合问题.html">Day 25 Combination 组合问题</a>
+<a href="Day 26 Permutation 排列问题.html">Day 26 Permutation 排列问题</a>
+<a href="Day 27 Dynamic Programming 动态规划 1.html">Day 27 Dynamic Programming 动态规划 1</a>
+<a href="Day 28 Dynamic Programming 动态规划 2.html">Day 28 Dynamic Programming 动态规划 2</a></nav>
+<main class="preview-main"><article class="preview-doc"><h1 id="day-22-array">Day 22 Array 数组</h1>
+<h2 id="_1">章节导读</h2>
+<p>上一章我们学习了滑动窗口这种技巧，滑动窗口会沿着固定的方向，在一维数组（或者字符串string）上移动。在二维数组上有一种类似的题型，区间类问题。区间类问题一般基于嵌套数组（二维数组），每个单独的数组代表一个区间（时间点、位移、位置...），需要我们按照一定顺序遍历区间，同时进行添加、删除、查询等等操作。</p>
+<h2 id="_2">核心算法——区间合并</h2>
+<p>区间合并类问题有两个基本元素：</p>
+<ol>
+<li>正方向的描述：正方向可以是时间、位置、起止点等概念</li>
+<li>区间：每个区间必须是闭合的，有开始有结束</li>
+</ol>
+<p>给出a、b两个不同的区间，它们之间有多种可能的情况。我们根据给定的正方向，将区间给定先后顺序，可以将分类简化。</p>
+<p><img alt="1.png" src="resources/A82B2DE1FC4D1890509D2F7A228D2D23.png"></p>
+<h2 id="1">1.案例: 合并区间</h2>
+<blockquote>
+<p>给出多个闭合区间，合并所有重叠的部分。</p>
+<p>输入: [[1,4], [2,5], [7,9]]
+输出: [[1,5], [7,9]]</p>
+</blockquote>
+<h3 id="_3">思路分析</h3>
+<p>我们先根据题意画出示意图，示例中区间[1,4]和[2,5]有重合部分，所以合并成了区间[1,5]</p>
+<p><img alt="2.png" src="resources/1F048271480916860C6EBCB6B10644A6.png"></p>
+<p>不难看出，区间合并的四种情况中有三种是可以合并的。合并后的区间起点是两个原有区间的最小值，终点是原有区间的最大值。</p>
+<p><img alt="3.png" src="resources/2121DFF4B5E9EB093F553B86B9BAFC78.png"></p>
+<p>我们可以先将区间按照起点排序，这样就只需要比较终点的值。</p>
+<ol>
+<li>将区间按照起点排序</li>
+<li>如果a，b区间重合（b.start &lt;= a.end），那么将a b合并：start = a.start, end = max(a.end, b.end)</li>
+<li>重复执行步骤2直到结束</li>
+</ol>
+<h3 id="_4">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">intervals</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将区间按照起点排序</span>
+<span class="w">    </span><span class="c1">// 数组第0位是起点，第1位是终点</span>
+<span class="w">    </span><span class="c1">// 创建Comparator比较器，比较数组第0位</span>
+<span class="w">    </span><span class="n">Arrays</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span><span class="w"> </span><span class="n">Comparator</span><span class="p">.</span><span class="na">comparing</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">i</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 建立一个链表记录合并好的结果</span>
+<span class="w">    </span><span class="n">LinkedList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">[]&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">intervals</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 找到上一个区间，如果与当前区间重合（curt.start &lt;= last.end）</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">list</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">()</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 合并进前一个区间，start不变，end = max(a.end, b.end)</span>
+<span class="w">            </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">()</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">i</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">()</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 否则这是一个不需要合并的区间</span>
+<span class="w">            </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 返回结果</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">toArray</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">list</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="o">][]</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_5">分析</h3>
+<p>时间复杂度O(n logn)，对n个区间排序。空间复杂度O(n)，用额外的list保存了结果。</p>
+<h2 id="2">2.案例: 区间交集</h2>
+<blockquote>
+<p>给出两组区间，找到两组区间的交集。每组区间之内互不相交，并按照开始时间排序。</p>
+<p>输入: arr1=[[1, 3], [5, 7], [9, 12]], arr2=[[5, 10]]
+输出: [5, 7], [9, 10]</p>
+</blockquote>
+<h3 id="_6">思路分析</h3>
+<p>本题是前一题的变种题，画出示意图，这次我们需要的不是两个重叠区间的外边缘，而是内边缘</p>
+<p><img alt="5.png" src="resources/53D32492DB50279786BFF3D554716D05.png"></p>
+<p>我们可以得出区间合并的规律：
++ start = min(a.start, b.start)
++ end = max(a.end, b.end)</p>
+<p>算法的流程与上一题类似：</p>
+<ol>
+<li>初始化两个指针，根据区间的结束时间，谁小移谁</li>
+<li>如果a，b区间重合，那么按规则合并</li>
+<li>重复执行步骤2直到结束</li>
+</ol>
+<h3 id="_7">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="nf">intervalIntersection</span><span class="p">(</span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">B</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 初始化两个指针</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">[]&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">A</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="na">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// a，b区间重合</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">overlap</span><span class="p">(</span><span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">))</span>
+<span class="w">            </span><span class="c1">// 按规则合并</span>
+<span class="w">            </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">intersect</span><span class="p">(</span><span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">));</span>
+
+<span class="w">        </span><span class="c1">// 区间的结束时间，谁小移谁</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">B</span><span class="o">[</span><span class="n">j</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">j</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">toArray</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[</span><span class="n">list</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="o">][]</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 判断区间a，b是否有交集</span>
+<span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">overlap</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">a</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">b</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">overlap</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 计算区间a，b的交集</span>
+<span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">intersect</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="p">{</span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">a</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">),</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">min</span><span class="p">(</span><span class="n">a</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">)};</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_8">分析</h3>
+<p>时间复杂度O(n)，输入的区间已经排序好了，只需要遍历一遍，无需额外排序。空间复杂度O(n)，用额外的list保存了结果。</p>
+<h2 id="3">3.案例: 最少会议室</h2>
+<blockquote>
+<p>给定一系列的会议时间间隔，包括起始和结束时间[[s1,e1],[s2,e2],...] (si &lt; ei)，计算所需的最少会议室数量。</p>
+<p>输入: [[4,5], [2,3], [2,4], [3,5]]
+输出: 2</p>
+</blockquote>
+<h3 id="_9">思路分析</h3>
+<p>先根据范例画出示意图，如果之间应用区间合并算法，我们会发现所有的区间都合并进了[2,5]，这表示4个区间重合。</p>
+<p><img alt="4.png" src="resources/1E6D433BB5A06EF99A0713B50B5CDC12.png"></p>
+<p>实际上我们并不需要4个会议室，[2,3]与[3,5]并不重合，因此我们只需要记录互斥的会议个数。仅当两个会议互斥时，才新增一个会议室。我们需要同时利用会议的开始时间和结束时间两个信息。先将会议按照开始时间排序，每一个会议开始时，我们要检查有多少会议还没有结束。</p>
+<ol>
+<li>将会议按照开始时间排序</li>
+<li>初始化一个最小堆，按照结束时间排序当前正在进行的会议</li>
+<li>遍历所有会议，每一个会议开始时，我们要检查有多少会议正在进行</li>
+<li>将已经结束的会议从最小堆弹出</li>
+<li>计算当前正在进行的会议</li>
+<li>重复3 - 5，直至结束</li>
+</ol>
+<h3 id="_10">代码实现</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">minMeetingRooms</span><span class="p">(</span><span class="kt">int</span><span class="o">[][]</span><span class="w"> </span><span class="n">intervals</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 将会议按照开始时间排序</span>
+<span class="w">    </span><span class="n">Arrays</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span><span class="w"> </span><span class="n">Comparator</span><span class="p">.</span><span class="na">comparing</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">i</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">));</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">minRoom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 初始化一个最小堆，按照结束时间排序当前正在进行的会议</span>
+<span class="w">    </span><span class="c1">// 创建Comparator比较器，比较数组第1位，即结束时间</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">[]&gt;</span><span class="w"> </span><span class="n">minHeap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">Comparator</span><span class="p">.</span><span class="na">comparing</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">i</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 遍历所有会议</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">intervals</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 加入当前会议</span>
+<span class="w">        </span><span class="n">minHeap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 将已经结束的会议从最小堆弹出</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">minHeap</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">minHeap</span><span class="p">.</span><span class="na">peek</span><span class="p">()</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">i</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span>
+<span class="w">            </span><span class="n">minHeap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 计算最多需要多少个会议室</span>
+<span class="w">        </span><span class="n">minRoom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">minRoom</span><span class="p">,</span><span class="w"> </span><span class="n">minHeap</span><span class="p">.</span><span class="na">size</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">minRoom</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_11">分析</h3>
+<p>时间复杂度O(n logn)，对n个区间排序。空间复杂度O(n)，用额外的heap</p>
+<h2 id="4">4.案例: 空闲时间</h2>
+<blockquote>
+<p>有k个工作人员，用一个二维列表表示他们的工作时间。找到所有员工共同的空闲时间。当前的工作时间已经按开始时间排序</p>
+<p>输入: [[[1,3], [9,12]], [[2,4]], [[6,8]]]
+输出: [4,6], [8,9]</p>
+</blockquote>
+<h3 id="1_1">思路分析1</h3>
+<p>我们可以按照区间合并的思路来解决本题</p>
+<p><img alt="6.png" src="resources/584D8F75873D739F474C51D4415CDEA2.png"></p>
+<ol>
+<li>将所有区间按开始时间排序</li>
+<li>将重叠的区间合并</li>
+<li>找到合并后的区间之间的间隔</li>
+</ol>
+<h3 id="1_2">代码实现1</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">employeeFreeTime</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">schedule</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 获得所有区间</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flatten</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">schedule</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">flatten</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 将所有区间按开始时间排序</span>
+<span class="w">    </span><span class="n">Collections</span><span class="p">.</span><span class="na">sort</span><span class="p">(</span><span class="n">flatten</span><span class="p">,</span><span class="w"> </span><span class="n">Comparator</span><span class="p">.</span><span class="na">comparing</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="na">start</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 将重叠的区间合并</span>
+<span class="w">    </span><span class="n">LinkedList</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Interval</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">flatten</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">list</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="na">start</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">().</span><span class="na">end</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">().</span><span class="na">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="na">end</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">getLast</span><span class="p">().</span><span class="na">end</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">list</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 找到合并后的区间之间的间隔</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="na">end</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">start</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="2_1">思路分析2</h3>
+<p>解法1需要O(n logn)的时间复杂度消耗和O(n)的空间复杂度消耗，尤其是我们创建了三个列表来缓存中间结果。</p>
+<p>我们其实在之前的章节中见过类似的题目：链表的k路合并。本题更像是k路合并在区间上的应用。</p>
+<p>我们创建一个Node class，来完成k路合并。Node包含了当前的区间，相关的员工eid，和对应员工工作时间的下标。</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Interval</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">eid</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">Node</span><span class="p">(</span><span class="n">Interval</span><span class="w"> </span><span class="n">interval</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">eid</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 当前的区间</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 员工eid</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">eid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eid</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 对应工作时间的下标</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">idx</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<ol>
+<li>创建一个最小堆，按照开始时间排序</li>
+<li>将每个员工的第1段工作时间加入最小堆</li>
+<li>从最小堆中取出最早的区间，记下它的结束时间</li>
+<li>每次从最小堆中取出一个区间，与当前已知的结束时间比较，更新已知的结束时间</li>
+<li>将Node移至下一位，将下一段工作时间加入最小堆</li>
+<li>重复3-4，直至结束</li>
+</ol>
+<h3 id="2_2">代码实现2</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">employeeFreeTime</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">schedule</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 创建一个最小堆，按照开始时间排序</span>
+<span class="w">    </span><span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">minHeap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PriorityQueue</span><span class="o">&lt;&gt;</span><span class="p">((</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="na">interval</span><span class="p">.</span><span class="na">start</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">interval</span><span class="p">.</span><span class="na">start</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">schedule</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 将每个员工的第1段工作时间加入最小堆</span>
+<span class="w">        </span><span class="n">minHeap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">schedule</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 最早区间的结束时间</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">lastEnd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minHeap</span><span class="p">.</span><span class="na">peek</span><span class="p">().</span><span class="na">interval</span><span class="p">.</span><span class="na">end</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">minHeap</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 每次从最小堆中取出一个区间</span>
+<span class="w">        </span><span class="n">Node</span><span class="w"> </span><span class="n">curt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minHeap</span><span class="p">.</span><span class="na">poll</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 当前区间的开始时间晚于lastEnd，说明二者不重合，中间有空闲时间</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">interval</span><span class="p">.</span><span class="na">start</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lastEnd</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 获得空闲时间</span>
+<span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Interval</span><span class="p">(</span><span class="n">lastEnd</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">interval</span><span class="p">.</span><span class="na">start</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 更新已知最晚的结束时间</span>
+<span class="w">        </span><span class="n">lastEnd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">lastEnd</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">interval</span><span class="p">.</span><span class="na">end</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Interval</span><span class="o">&gt;</span><span class="w"> </span><span class="n">freeTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">schedule</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">eid</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 如果当前员工还有下一段工作时间，加入最小堆</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">freeTime</span><span class="p">.</span><span class="na">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">minHeap</span><span class="p">.</span><span class="na">offer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">freeTime</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">curt</span><span class="p">.</span><span class="na">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">eid</span><span class="p">,</span><span class="w"> </span><span class="n">curt</span><span class="p">.</span><span class="na">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="_12">分析</h3>
+<p>时间复杂度O(n logk)，空间复杂度O(k)，k是员工总数。最小堆消耗了O(k)空间，并且执行了n次O(logk)的插入与删除操作。</p>
+<h2 id="_13">总结</h2>
+<p>本章我们学习了区间类问题。区间类问题特征比较明显，一般使用嵌套列表或二维数组，每个单独的数组代表一个区间。解法也比较普适，需要我们按照一定顺序（起点或者终点）排序，然后遍历所有区间。</p>
+<p><img alt="7.png" src="resources/4E2FB2EDA8158F12DCF5A060D8F44768.png"></p>
+<h2 id="_14">习题</h2>
+<ol>
+<li>给定一系列的会议时间间隔，包括起始和结束时间[[s1,e1],[s2,e2],...] (si &lt; ei)，判断一个人是否可以参加所有会议。</li>
+<li>给定一些区间，找到需要移除的最小区间数，以使其余的区间不重叠。</li>
+<li>给出一个无重叠的按照区间起始端点排序的区间列表。在列表中插入一个新的区间，你要确保列表中的区间仍然有序且不重叠（如果有必要的话，可以合并区间）。</li>
+</ol></article></main>
+</div>
+</body>
+</html>
