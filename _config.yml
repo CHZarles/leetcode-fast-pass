@@ -3,5 +3,11 @@ remote_theme: just-the-docs/just-the-docs@v0.10.0
 plugins:
   - jekyll-remote-theme
 
-url: "https://s09g.github.io"
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+url: "https://chzarles.github.io"
 baseurl: "/leetcode-fast-pass"
