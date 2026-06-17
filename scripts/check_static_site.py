@@ -34,9 +34,14 @@ def assert_before(text, first, second, label):
 def main():
     if not (ROOT / ".nojekyll").exists():
         raise AssertionError("missing .nojekyll")
+    if (ROOT / "docs" / "Day 6 - Array 数组3.md").exists():
+        raise AssertionError("public docs should not expose raw markdown files")
+    if not (ROOT / "source_docs" / "Day 6 - Array 数组3.md").exists():
+        raise AssertionError("missing source markdown copy")
 
     index = read("index.html")
     day6 = read("docs/Day 6 - Array 数组3.html")
+    not_found = read("404.html")
 
     assert_contains(index, 'class="preview-layout"', "home")
     assert_contains(index, 'class="preview-nav"', "home")
@@ -55,6 +60,10 @@ def main():
     assert_contains(day6, 'class="kd"', "day6")
     assert_not_contains(day6, "just-the-docs-default.css", "day6")
     assert_not_contains(day6, 'class="site-nav"', "day6")
+
+    assert_contains(not_found, ".md", "404")
+    assert_contains(not_found, ".html", "404")
+    assert_contains(not_found, "location.replace", "404")
 
 
 if __name__ == "__main__":

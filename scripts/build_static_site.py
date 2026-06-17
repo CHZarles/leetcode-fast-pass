@@ -8,7 +8,8 @@ import markdown
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ROOT / "docs"
+DOCS_SOURCE = ROOT / "source_docs"
+DOCS_OUTPUT = ROOT / "docs"
 
 FRONT_MATTER = re.compile(r"^---\s*\n.*?\n---\s*\n", re.S)
 LIQUID_RELATIVE = re.compile(r"\{\{\s*'([^']+)'\s*\|\s*relative_url\s*\}\}")
@@ -58,7 +59,7 @@ def nav_html(active=None, current_depth=0):
     links = [
         f'<a class="preview-title" href="{preview_path_for("home", current_depth)}">28 天速通 LeetCode</a>'
     ]
-    for path in sorted(DOCS.glob("Day*.md"), key=day_key):
+    for path in sorted(DOCS_SOURCE.glob("Day*.md"), key=day_key):
         cls = ' class="active"' if active == path.stem else ""
         href = preview_path_for(path, current_depth)
         links.append(f'<a{cls} href="{html.escape(href)}">{html.escape(path.stem)}</a>')
@@ -219,8 +220,8 @@ def clean_html(output):
 
 
 def copy_assets():
-    resources_src = DOCS / "resources"
-    resources_dst = DOCS / "resources"
+    resources_src = DOCS_OUTPUT / "resources"
+    resources_dst = DOCS_OUTPUT / "resources"
     if resources_src.exists() and resources_src != resources_dst:
         shutil.copytree(resources_src, resources_dst, dirs_exist_ok=True)
 
@@ -233,9 +234,9 @@ def build():
         encoding="utf-8",
     )
 
-    for src in sorted(DOCS.glob("Day*.md"), key=day_key):
+    for src in sorted(DOCS_SOURCE.glob("Day*.md"), key=day_key):
         body = convert_markdown(src.read_text(encoding="utf-8"), page_depth=1)
-        (DOCS / f"{src.stem}.html").write_text(
+        (DOCS_OUTPUT / f"{src.stem}.html").write_text(
             shell(src.stem, body, active=src.stem, current_depth=1, doc=True),
             encoding="utf-8",
         )

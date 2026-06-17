@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页面跳转</title>
+<script>
+  (function () {
+    var path = window.location.pathname;
+    if (path.slice(-3) === ".md") {
+      window.location.replace(path.slice(0, -3) + ".html" + window.location.search + window.location.hash);
+    }
+  }());
+</script>
+<style>
+  body {
+    margin: 0;
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    background: #fffdf7;
+    color: #171513;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  }
+
+  main {
+    width: min(520px, calc(100vw - 32px));
+    padding: 28px;
+    border: 1px solid rgba(23, 21, 19, 0.16);
+    border-radius: 8px;
+    background: #f7f2e8;
+  }
+
+  a {
+    color: #2f6fcb;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>页面未找到</h1>
+  <p>如果你打开的是旧的 Markdown 地址，页面会自动跳转到对应的 HTML 页面。</p>
+  <p><a href="./">返回首页</a></p>
+</main>
+</body>
+</html>
